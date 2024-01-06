@@ -37,7 +37,7 @@
         <div class="main-title">Animated Rotation</div>
         <div class="body-text">Rotate a video from an angle to another angle, over time.</div>
           <video width="auto" height="auto" controls>
-              <source src="../assets/images/Retro.mp4" type="video/mp4" class="project-image">
+              <source src="../assets/images/Rotation.mp4" type="video/mp4" class="project-image">
           </video>
       </div>
       <div id="project-details">
@@ -45,18 +45,17 @@
         <div class="project-details-content">
           <div class="body-text">
             <pre>
-                <code class="language-bash">rate=30 # clip frame rate
-startAngle=0 # Angle to start the rotation from
-endAngle=20 # Angle to end the rotation
+                <code class="language-bash">startAngle=10 # Angle to start the rotation from
+endAngle=30 # Angle to end the rotation
 frameRate=30 # Frame rate of the source file
 rotateDuration=2 # Rotation duration in seconds
-rotateDurationInFrames=$rotateDuration*$frameRate # Rotation duration in frames
-anglePerFrame=$(echo "scale=0; ($startAngle-$endAngle)/$rotateDurationInFrame" | bc | cut -d'.' -f1) # Rotation angle per frame
+rotateDurationInFrames=$(($rotateDuration*$frameRate)) # Rotation duration in frames
+anglePerFrame=$(echo "scale=3; ($endAngle - $startAngle) / $rotateDurationInFrames" | bc) # calculate film frame height
 
 ffmpeg \
--i $baseVideo \
+-ss 10 -t $rotateDuration -i $input \
 -filter_complex \
-"[0]rotate='(${angle}*PI/180)+((${anglePerFrame}*PI/180)*n)':fillcolor=none:ow=iw:oh=ih[v1][out]" \
+"[0]rotate='($startAngle*PI/180)+($anglePerFrame*PI/180)*n':fillcolor=none:ow=iw:oh=ih[out]" \
 -map "[out]" -y $output
               </code>
             </pre>
@@ -69,11 +68,11 @@ ffmpeg \
             <span class="subheader-text">Get your console ready...</span>
             <div class="about-section-content">
                 <div class="body-text">
-                    On line 9 | Call ffmpeg binary<br>
-                    On line 10 | Call the input video<br>
-                    On line 11 | Starting the filter complex chain<br>
-                    On line 12 | Call the first input video - [0]. It starts the rotation from the starting angle and ends the rotation at the desired angle, over the specified time. Name the link [out].<br>
-                    On line 13 | Call the filter chain output called [out]. Overwrite output file.<br>
+                    On line 8 | Call ffmpeg binary<br>
+                    On line 9 | Call the input video<br>
+                    On line 10 | Starting the filter complex chain<br>
+                    On line 11 | Call the first input video - [0]. It starts the rotation from the starting angle and ends the rotation at the desired angle, over the specified time. Name the link [out].<br>
+                    On line 12 | Call the filter chain output called [out]. Overwrite output file.<br>
                 </div>
             </div>
         </div>
