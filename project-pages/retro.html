@@ -35,7 +35,7 @@
       <!-- PROJECT HEADER -->
       <div id="project-header">
         <div class="main-title">Retro Look</div>
-        <div class="body-text">Use this combination of filters to achieve a retro style look. Partly inspired by <a href="https://www.gariany.com/2020/08/ffmpeg-step-by-step-retro-video-filter/">this</a> work.</div>
+        <div class="body-text">Use this combination of filters to achieve a retro style look. Somewhat inspired by <a href="https://www.gariany.com/2020/08/ffmpeg-step-by-step-retro-video-filter/">this</a> work.</div>
           <video width="auto" height="auto" controls>
               <source src="../assets/media/Retro.mp4" type="video/mp4" class="project-image">
           </video>
@@ -45,34 +45,46 @@
         <div class="project-details-content">
           <div class="body-text">
             <pre>
-                <code class="language-bash">rate=30 # clip frame rate
-width=1920 # final clip width
-height=1080 # final clip height
-filmFrameScale='0.9' # film frame scale from original
-frameWidth=$(echo "scale=0; $width * $filmFrameScale" | bc | cut -d'.' -f1) # calculate film frame width
-frameHeight=$(echo "scale=0; $height * $filmFrameScale" | bc | cut -d'.' -f1) # calculate film frame height
-radius=100 # film frame corner radius
-xShake=20 # shake amount on x axis
-yShake=20 # shake amount on y axis
-blendMode=divide # blend mode for film damage clip
-blur=10 # film frame blur amount
+                <code class="language-bash">import subprocess
+import math
 
-ffmpeg \
--i $baseVideo \
--i $fimDamageVideo \
--f lavfi -i color=white:size=${frameWidth}x${frameHeight}:rate=$rate \
--f lavfi -i color=black:size=${width}x${height}:rate=$rate \
--filter_complex \
-"[0]scale=$width:$height,pad=iw+10:ih+10,crop=iw-10:ih-10:0+'random(1)*$xShake+random(1)*(-$xShake)':0+'random(1)*$yShake+random(1)*(-$yShake)'[v1];\
-[v1]curves=preset=vintage[v2];\
-[1]crop=$width:$height[noise];\
-[v2][noise]blend=$blendMode[vid];\
-[2]format=yuva444p,geq=lum='p(X,Y)':a='if(gt(abs(W/2-X),W/2-${radius})*gt(abs(H/2-Y),H/2-${radius}),if(lte(hypot(${radius}-(W/2-abs(W/2-X)),${radius}-(H/2-abs(H/2-Y))),${radius}),255,0),255)'[filmframe];\
-[3][filmframe]overlay=(W-w)/2:(H-h)/2[filmalpha];\
-[filmalpha]gblur=$blur[alpha];\
-[vid][alpha]alphamerge[vid];\
-[3][vid]overlay=(W-w)/2:(H-h)/2:shortest=1,vignette='PI/4+random(1)*PI/50'[out]" \
--map "[out]" -t 5 -an -y $output
+rate = 30  # Clip frame rate
+width = 1920  # Final clip width
+height = 1080  # Final clip height
+film_frame_scale = 0.9  # Film frame scale from original
+frame_width = int(width * film_frame_scale)  # Calculate film frame width
+frame_height = int(height * film_frame_scale)  # Calculate film frame height
+radius = 100  # Film frame corner radius
+xShake = 20  # Shake amount on x-axis
+yShake = 20  # Shake amount on y-axis
+blend_mode = "divide"  # Blend mode for film damage clip
+blur = 10  # Film frame blur amount
+
+base_video = "input.mp4"  # Replace with actual path
+film_damage_video = "film-damage.mp4"  # Replace with actual path
+output = "output.mp4"  # Replace with desired output path
+
+filters = f"""[0]scale={width}:{height},pad=iw+10:ih+10,crop=iw-10:ih-10:0+'random(1)*{xShake}+random(1)*(-{xShake})':0+'random(1)*{yShake}+random(1)*(-{yShake})'[v1];
+[v1]curves=preset=vintage[v2];
+[1]crop={width}:{height}[noise];
+[v2][noise]blend={blend_mode}[vid];
+[2]format=yuva444p,geq=lum='p(X,Y)':a='if(gt(abs(W/2-X),W/2-{radius})*gt(abs(H/2-Y),H/2-{radius}),if(lte(hypot({radius}-(W/2-abs(W/2-X)),{radius}-(H/2-abs(H/2-Y))),{radius}),255,0),255)'[filmframe];
+[3][filmframe]overlay=(W-w)/2:(H-h)/2[filmalpha];
+[filmalpha]gblur={blur}[alpha];
+[vid][alpha]alphamerge[vid];
+[3][vid]overlay=(W-w)/2:(H-h)/2:shortest=1,vignette='PI/4+random(1)*PI/50'[out]"""
+
+command = [
+    "ffmpeg",
+    "-i", base_video,
+    "-i", film_damage_video,
+    "-f", "lavfi", "-i", f"color=white:size={frame_width}x{frame_height}:rate={rate}",
+    "-f", "lavfi", "-i", f"color=black:size={width}x{height}:rate={rate}",
+    "-filter_complex", filters,
+    "-map", "[out]", "-t", "5", "-an", "-y", output
+]
+
+subprocess.run(command, check=True)  # Execute the FFmpeg command
               </code>
             </pre>
           </div>
