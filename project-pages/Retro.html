@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html lang="en">
+	<head>
+		<meta charset="utf-8">
+     <link rel="icon" href="../assets/images/SMPTE-s.svg.png" />
+     <title>Oren Shalmy</title>
+    <meta name="description" content="A collection of useful FFmpeg code">
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <link rel="stylesheet" href="../css/layout.css">
+    <link rel="stylesheet" href="../css/typography.css">
+    <link rel="stylesheet" href="../css/utilities.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/default.min.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/highlightjs-line-numbers.js/dist/highlightjs-line-numbers.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/bash.min.js"></script>
+    <script defer src="../js/script.js"></script>
+    <script>hljs.highlightAll(); hljs.initLineNumbersOnLoad({singleLine: true, startFrom: 1,});</script>
+	</head>
+
+    <body>
+    <!-- NAVBAR -->
+    <div class="navbar">
+      <a class="nav-title-link" href="../index.html">
+        <span class="nav-title">Portfolio Title</span>
+        <a class="button" href="mailto:orenshalmy@gmail.com">
+          <span class="button-text">Contact Me</span>
+        </a>
+      </a>
+    </div>
+
+    <!-- MAIN PAGE CONTENT -->
+    <div id="main-content">
+
+      <!-- PROJECT HEADER -->
+      <div id="project-header">
+        <div class="main-title">Retro Look</div>
+        <div class="body-text">Use this combination of filters to achieve a retro style look</div>
+          <video width="auto" height="auto" controls>
+              <source src="../assets/images/Retro.mp4" type="video/mp4" class="project-image">
+          </video>
+      </div>
+
+      <div id="project-details">
+        <div class="subheader-text">Code:</div>
+        <div class="project-details-content">
+          <div class="body-text">
+            <pre>
+                <code class="language-bash">rate=30 # clip frame rate
+width=1920 # final clip width
+height=1080 # final clip height
+filmFrameScale='0.9' # film frame scale from original
+frameWidth=$(echo "scale=0; $width * $filmFrameScale" | bc | cut -d'.' -f1) # calculate film frame width
+frameHeight=$(echo "scale=0; $height * $filmFrameScale" | bc | cut -d'.' -f1) # calculate film frame height
+radius=100 # film frame corner radius
+xShake=20 # shake amount on x axis
+yShake=20 # shake amount on y axis
+blendMode=divide # blend mode for film damage clip
+blur=10 # film frame blur amount
+
+ffmpeg \
+-i $baseVideo \
+-i $fimDamageVideo \
+-f lavfi -i color=white:size=${frameWidth}x${frameHeight}:rate=$rate \
+-f lavfi -i color=black:size=${width}x${height}:rate=$rate \
+-filter_complex \
+"[0]scale=$width:$height,pad=iw+10:ih+10,crop=iw-10:ih-10:0+'random(1)*$xShake+random(1)*(-$xShake)':0+'random(1)*$yShake+random(1)*(-$yShake)'[v1];\
+[v1]curves=preset=vintage[v2];\
+[1]crop=$width:$height[noise];\
+[v2][noise]blend=$blendMode[vid];\
+[2]format=yuva444p,geq=lum='p(X,Y)':a='if(gt(abs(W/2-X),W/2-${radius})*gt(abs(H/2-Y),H/2-${radius}),if(lte(hypot(${radius}-(W/2-abs(W/2-X)),${radius}-(H/2-abs(H/2-Y))),${radius}),255,0),255)'[filmframe];\
+[3][filmframe]overlay=(W-w)/2:(H-h)/2[filmalpha];\
+[filmalpha]gblur=$blur[alpha];\
+[vid][alpha]alphamerge[v1];\
+[3][v1]overlay=(W-w)/2:(H-h)/2:shortest=1,vignette='PI/4+random(1)*PI/50'[out]" \
+-map "[out]" -t 5 -an -y $output
+              </code>
+            </pre>
+          </div>
+        </div>
+      </div>
+
+      <!-- FREE TEXT -->
+        <div id="about-section">
+            <span class="subheader-text">Get your console ready...</span>
+            <div class="about-section-content">
+                <div class="body-text">
+                    In line 12 | Call ffmpeg binary<br>
+                    In line 13 | Call the input video<br>
+                    In line 13 | Generate solid white layer. Dimensions are the final clip output size. Rate is the final clip frame rate. <br>
+                </div>
+            </div>
+        </div>
+
+
+    </div>
+
+    <!-- FOOTER -->
+    <div id="footer">
+      <!-- 
+        TODO - Change href to your Instagram account (can also delete entire "a" element if no Instagram) 
+
+        This should be the same across all pages.
+      -->
+      <a class="icon-link" target="_blank" href="https://twitter.com/whitevans_eth">
+        <image src="../assets/icons/instagram.svg" class="footer-icon"/>
+      </a>
+      <!-- 
+        TODO - Change href to your Twitter account (can also delete entire "a" element if no Twitter) 
+      
+        This should be the same across all pages.
+      -->
+      <a class="icon-link" target="_blank" href="https://twitter.com/whitevans_eth">
+        <image src="../assets/icons/twitter.svg" class="footer-icon"/>
+      </a>
+      <!-- 
+        TODO - Change the email after "mailto" to your contact email 
+      
+        This should be the same across all pages.
+      -->
+      <a class="icon-link" href="mailto:whitevans.eth@gmail.com">
+        <image src="../assets/icons/mail.svg" class="footer-icon"/>
+      </a>
+    </div>
+
+	</body>
+</html>
