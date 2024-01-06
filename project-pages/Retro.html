@@ -70,8 +70,8 @@ ffmpeg \
 [2]format=yuva444p,geq=lum='p(X,Y)':a='if(gt(abs(W/2-X),W/2-${radius})*gt(abs(H/2-Y),H/2-${radius}),if(lte(hypot(${radius}-(W/2-abs(W/2-X)),${radius}-(H/2-abs(H/2-Y))),${radius}),255,0),255)'[filmframe];\
 [3][filmframe]overlay=(W-w)/2:(H-h)/2[filmalpha];\
 [filmalpha]gblur=$blur[alpha];\
-[vid][alpha]alphamerge[v1];\
-[3][v1]overlay=(W-w)/2:(H-h)/2:shortest=1,vignette='PI/4+random(1)*PI/50'[out]" \
+[vid][alpha]alphamerge[vid];\
+[3][vid]overlay=(W-w)/2:(H-h)/2:shortest=1,vignette='PI/4+random(1)*PI/50'[out]" \
 -map "[out]" -t 5 -an -y $output
               </code>
             </pre>
@@ -86,16 +86,20 @@ ffmpeg \
                 <div class="body-text">
                     On line 13 | Call ffmpeg binary<br>
                     On line 14 | Call the input video<br>
-                    On line 15 | Generate solid white layer to be used as a mask later<br>
-                    On line 16 | Generate solid black layer to be used as a mask later<br>
-                    On line 17 | Call ffmpeg binary<br>
-                    On line 18 | Call ffmpeg binary<br>
-                    On line 19 | Call ffmpeg binary<br>
-                    On line 20 | Call ffmpeg binary<br>
-                    On line 21 | Call ffmpeg binary<br>
-                    On line 22 | Call ffmpeg binary<br>
-                    On line 23 | Call ffmpeg binary<br>
-
+                    On line 15 | Call the film damage video<br>
+                    On line 16 | Generate solid white layer to be used as a mask later<br>
+                    On line 17 | Generate solid black layer to be used as a mask later<br>
+                    On line 18 | Starting the filter complex chain<br>
+                    On line 19 | Call the first input video - [0]. Scale the video, pad it with 10 extra pixels and crop it with the original scale. This is because we need "space" for later shaking the video by randomizing it X and Y values (the top left point of the input). Name the link [v1].<br>
+                    On line 20 | Call [v1]. Apply curves filter with preset Vintage. Name the link [v2].<br>
+                    On line 21 | Call the second input - film damage video - [1]. Crop it to output clip dimensions. Name the link [noise].<br>
+                    On line 22 | Call [v2] and [noise]. Blend the inputs using blend mode. Name the link [vid].<br>
+                    On line 23 | Call the third input - white solid - [2]. Apply the 'geq' filter to add rounded corners with radios parameter. Name the link [filmframe].<br>
+                    On line 24 | Call the fourth input - black solid - [3]. Overlay [filmframe] on top at center. Call the link [filmalpha].<br>
+                    On line 25 | Call [filmalpha]. Apply blur. Name the link [alpha].<br>
+                    On line 26 | Call [vid] and [alpha]. Merge the inputs. Name the link [vid].<br>
+                    On line 27 | Overlay [vid] on top of [3] (black solid), at center. Apply a vignette effect. Call the link [out]. End the filter chain.<br>
+                    On line 28 | Call the filter chain output called [out]. Limit the output duration for 5 seconds. Discard audio. Overwrite output file.</Ove>
                 </div>
             </div>
         </div>
