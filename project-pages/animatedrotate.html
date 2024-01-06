@@ -35,7 +35,7 @@
       <!-- PROJECT HEADER -->
       <div id="project-header">
         <div class="main-title">Animated Rotation</div>
-        <div class="body-text">Rotate a video from an angle to another angle, over time.</div>
+        <div class="body-text">Rotate a video from an angle to another angle, over time</div>
           <video width="auto" height="auto" controls>
               <source src="../assets/images/Rotation.mp4" type="video/mp4" class="project-image">
           </video>
@@ -53,7 +53,7 @@ rotateDurationInFrames=$(($rotateDuration*$frameRate)) # Rotation duration in fr
 anglePerFrame=$(echo "scale=3; ($endAngle - $startAngle) / $rotateDurationInFrames" | bc) # calculate film frame height
 
 ffmpeg \
--ss 10 -t $rotateDuration -i $input \
+-i $input \
 -filter_complex \
 "[0]rotate='($startAngle*PI/180)+($anglePerFrame*PI/180)*n':fillcolor=none:ow=iw:oh=ih[out]" \
 -map "[out]" -y $output
@@ -68,6 +68,11 @@ ffmpeg \
             <span class="subheader-text">Get your console ready...</span>
             <div class="about-section-content">
                 <div class="body-text">
+                    The trick here is to calculate how much to rotate, each frame.<br>
+                    To get this number, we first calculate how many angles we need to rotate. endAngle (30) - startAngle (10) = 20.<br>
+                    Then we calculate the duration of the rotation, in frames. $rotateDuration (2) * $frameRate (30) = 60.<br>
+                    Then, we calculate the exact angle to rotate per each frame, so we end at the 'endAngle' value at exactly 'rotateDuration' time.<p>
+
                     On line 8 | Call ffmpeg binary<br>
                     On line 9 | Call the input video<br>
                     On line 10 | Starting the filter complex chain<br>
