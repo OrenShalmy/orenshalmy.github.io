@@ -34,10 +34,10 @@
 
       <!-- PROJECT HEADER -->
       <div id="project-header">
-        <div class="main-title">Test videos</div>
+        <div class="main-title">Test videos generator</div>
         <div class="body-text">Generate informative test videos. Save videos locally or publish live via RTMP, SRT. Useful for testing live endpoints.</div>
           <video width="auto" height="auto" controls>
-              <source src="../assets/media/blur.mp4" type="video/mp4" class="project-image">
+              <source src="../assets/media/testpattern.mp4" type="video/mp4" class="project-image">
           </video>
       </div>
       <div id="project-details">
@@ -57,10 +57,10 @@ import random
 ##  -t for the *title* to be overlayed on the video (e.g "Test file...")
 ##  -o for the *output* file/stream name
 
-## ##
+## Example:
 ##  $: VideoGenerator.py -s 1920x1080 -r 25 -d 120 -t "Test File" -o /Users/Desktop/file.mp4
-##  $: VideoGenerator.py -s 1280x720 -r 30 -t "Test RTMP Stream" -o "rtmp://1_qoqzpw8f.p.kpublish.kaltura.com:1935/kLive?t=d9218221/1_qoqzpw8f_1"
-##  $: VideoGenerator.py -s 1280x720 -r 30 -t "Test SRT Stream" -o "srt://1_qoqzpw8f.p.srt.publish.live.kaltura.com:7045#:::e=1_qoqzpw8f,st=0,p=d9218221"
+##  $: VideoGenerator.py -s 1280x720 -r 30 -t "Test RTMP Stream" -o "rtmp://some.rtmp.endpoint:1935/stream/key"
+##  $: VideoGenerator.py -s 1280x720 -r 30 -t "Test SRT Stream" -o "srt://some.srt.endpoint:7045#:::e=key,st=0,p=stream"
 
 
 ### Get/parse cli parameters
