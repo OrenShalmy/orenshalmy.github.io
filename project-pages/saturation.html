@@ -37,7 +37,7 @@
         <div class="main-title">Saturation over time</div>
         <div class="body-text">Change a video's saturation over time</div>
           <video width="auto" height="auto" controls>
-              <source src="../assets/media/Rotation.mp4" type="video/mp4" class="project-image">
+              <source src="../assets/media/bw.mp4" type="video/mp4" class="project-image">
           </video>
       </div>
       <div id="project-details">
@@ -45,16 +45,17 @@
         <div class="project-details-content">
           <div class="body-text">
             <pre>
-                <code class="language-bash"># input='/path/to/input.mp4'
+                <code class="language-bash">input='/path/to/input.mp4'
+output='/path/to/output.mp4'
 fr=30
-duration=$((2 * fr))
-saturation=1.5
-saturationOut=0
-saturationPerFrame=$(echo "scale=3; ($saturationOut - $saturation) / $duration" | bc)
+dur=$((2 * $fr))
+saturation=0
+saturationOut=1
+saturationPerFrame=$(echo "scale=3; ($saturationOut - $saturation) / $dur" | bc)
 
 ffmpeg -i $input -an -vf \
 "eq='saturation=$saturation+$saturationPerFrame*n':eval=frame" \
--t 2 -an -y '/Users/oren/Downloads/EQQQ.mp4'
+-t 3 -an -y $output
               </code>
             </pre>
           </div>
