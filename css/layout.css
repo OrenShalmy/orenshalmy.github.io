@@ -21,14 +21,11 @@ body {
 /* Main Page Layout */
 
 #main-content {
-  margin: 225px 425px;
+  margin: 100px 425px;
   display: flex;
   flex-direction: column;
-  gap: 96px;
+  gap: 64px;
 }
-
-
-
 
 /* Portfolio Header */
 
@@ -41,7 +38,7 @@ body {
 #portfolio-header-image-container {
   display: flex;
   flex-direction: column;
-  gap: 10px;
+  gap: 2px;
   flex-basis: 50%;
 }
 
@@ -97,13 +94,13 @@ body {
       max-width: calc((100% - 32px) / 3);
       display: flex;
       flex-direction: column;
-      gap: 34px;
+      gap: 20px;
     }
 
     .project-card-text-container {
       flex-direction: column;
       display: flex;
-      gap: 16px
+      gap: 10px
     }
 
     .project-image {
@@ -132,13 +129,13 @@ body {
 #project-details {
   display: flex;
   flex-direction: column;
-  gap: 16px;
+  /*gap: 10px;*/
 }
 
 .project-details-content {
   display: flex;
   flex-direction: column;
-  gap: 34px;
+  /*gap: 34px;*/
 }
 
     /* Project Gallery */
@@ -175,21 +172,21 @@ body {
 /* Extra Extra large devices (large laptops and desktops, 1200px and below) */
 @media only screen and (max-width: 1600px) {
   #main-content {
-    margin: 225px 275px;
+    margin: 150px 275px;
   }
 }
 
 /* Extra large devices (large laptops and desktops, 1200px and below) */
 @media only screen and (max-width: 1200px) {
   #main-content {
-    margin: 225px 175px;
+    margin: 150px 175px;
   }
 }
 
 /* Large devices (laptops/desktops, 1000px and below) */
 @media only screen and (max-width: 1000px) {
   #main-content {
-    margin: 225px 75px;
+    margin: 150px 75px;
   }
 }
 
