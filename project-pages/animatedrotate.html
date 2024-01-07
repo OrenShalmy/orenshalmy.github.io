@@ -50,7 +50,7 @@ endAngle=30 # Angle to end the rotation
 frameRate=30 # Frame rate of the source file
 rotateDuration=2 # Rotation duration in seconds
 rotateDurationInFrames=$(($rotateDuration*$frameRate)) # Rotation duration in frames
-anglePerFrame=$(echo "scale=3; ($endAngle - $startAngle) / $rotateDurationInFrames" | bc) # calculate film frame height
+anglePerFrame=$(echo "scale=3; ($endAngle - $startAngle) / $rotateDurationInFrames" | bc) # calculate the angle to rotate per each frame
 
 ffmpeg \
 -i $input \
