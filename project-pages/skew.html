@@ -34,8 +34,8 @@
 
       <!-- PROJECT HEADER -->
       <div id="project-header">
-        <div class="main-title">Blur in/out</div>
-        <div class="body-text">Use gblur with the fade filter to get blur in / out effect.</div>
+        <div class="main-title">Change frame perspective</div>
+        <div class="body-text">Change perspective over time to get fake 3D rotation.</div>
           <video width="auto" height="auto" controls autoplay>
               <source src="../assets/media/blur.mp4" type="video/mp4" class="project-image">
           </video>
@@ -45,35 +45,19 @@
         <div class="project-details-content">
           <div class="body-text">
             <pre>
-                <code class="language-python">import subprocess
+                <code class="language-bash">input='path/to/input.jpg' # image input
+                    output='path/to/output.mp4' # video output
+topleft='0:(0+200-(5*in))'
+topright='W:(0+200+(5*in))'
+bottomleft='0:(H-200+(5*in))'
+bottomright='W:(H-200-(5*in))'
+duration=50 # in frames
 
-
-blur = 0  #
-blurOut = 30
-duration = 2
-input_video = "path/to/input.mp4"  # Replace with input file path
-output_video = "path/to/output.mp4"  # Replace with output file path
-
-def blur(input_video, blur, blurOut, duration, output_video):
-
-    direction = ''
-    if blur < blurOut:
-        direction = 'in'
-        blur = blurOut
-    else:
-        direction = 'out'
-    filters = f"""[0]split[base][blur];[blur]gblur={blurOut},format=yuva420p,fade={direction}:st=0:d={duration}:alpha=1[blurred];[base][blurred]overlay[out]"""
-
-    command = [
-        "ffmpeg",
-        "-ss", "249", "-i", input_video,
-        "-filter_complex", filters,
-        "-map", "[out]", "-t", "3", "-an", "-y", output_video
-    ]
-    subprocess.run(command, check=True)
-
-blur(input_video, blur, blurOut, duration, output_video)
-              </code>
+ffmpeg -i $input -vf \
+scale=iw*1.5:ih*1.5,\
+loop=$duration:1:1,\
+perspective=$topleft:$topright:$bottomleft:$bottomright:sense=source:eval=frame"
+-y $output              </code>
             </pre>
           </div>
         </div>

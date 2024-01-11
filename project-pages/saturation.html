@@ -52,6 +52,7 @@ dur=$((2 * $fr))
 saturation=0
 saturationOut=1
 saturationPerFrame=$(echo "scale=3; ($saturationOut - $saturation) / $dur" | bc)
+# (1 - 0 / 60) = 0.016
 
 ffmpeg -i $input -an -vf \
 "eq='saturation=$saturation+$saturationPerFrame*n':eval=frame" \
@@ -68,9 +69,10 @@ ffmpeg -i $input -an -vf \
             <div class="about-section-content">
                 <div class="body-text">
                     The trick here is to calculate how much to change the saturation value, per each frame.<br>
-                    To get this number, we first calculate how much saturation we need change. saturationOut (0) - saturation (1.5) = -1.5.<br>
+                    To get this number, we first calculate how much saturation we need change. saturationOut (1) - saturation (0) = 1.<br>
                     Then we calculate the duration of the change, in frames. $duration (2) * $fr (30) = 60.<br>
-                    Then, we calculate the exact saturation value per each frame, so we end at 'saturationOut' value at exactly the 'duration' time.
+                    This gives the exact saturation value per each frame, so we end at 'saturationOut' value at exactly the 'duration' time.<br>
+                    <a href="https://ffmpeg.org/ffmpeg-filters.html#eq">EQ filter</a> also has brightness, contrast, gamma and gamma per channel.
                 </div>
             </div>
         </div>
