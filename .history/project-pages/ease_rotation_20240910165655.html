@@ -35,7 +35,7 @@
       <!-- PROJECT HEADER -->
       <div id="project-header">
         <div class="main-title">Animated Rotation with easing</div>
-        <div class="body-text">Rotate a video from an angle to another angle, over time with easing in/out.</div>
+        <div class="body-text">Rotate a video from an angle to another angle, over time with easing in/out</div>
           <video width="auto" height="auto" controls autoplay>
               <source src="../assets/media/easeing.mp4" type="video/mp4" class="project-image">
           </video>
@@ -45,20 +45,18 @@
         <div class="project-details-content">
           <div class="body-text">
             <pre>
-                <code class="language-bash">input='/path/to/input.png'
+                <code class="language-bash">
+startAngle=10
+input='/path/to/file.png'
 output='/path/to/output.mp4'
 start_angle=0
 end_angle=-90
 anim_duration=2
 easing_factor=-5
 
-ffmpeg \
--loop 1 \
--i $input \
--t $anim_duration \
--vf \
-"rotate=angle=(${start_angle} * PI/180) - (((1 - exp(${easing_factor} * (t / ${anim_duration}))) / (1 - exp(${easing_factor}))) * (${start_angle} - ${end_angle}) * PI/180)" \
--y $output
+ffmpeg -loop 1 -i $input -t $anim_duration -filter_complex \
+"[0:v]rotate=angle=(${start_angle} * PI/180) - (((1 - exp(${easing_factor} * (t / ${anim_duration}))) / (1 - exp(${easing_factor}))) * (${start_angle} - ${end_angle}) * PI/180)[rotated]" \
+-map "[rotated]" -y $output
               </code>
             </pre>
           </div>
@@ -70,17 +68,16 @@ ffmpeg \
             <span class="subheader-text">Get your console ready...</span>
             <div class="about-section-content">
                 <div class="body-text">
-                <div class="on-line-text">On line 1,2:</div> Define input file and destination file.<p>
-                <div class="on-line-text">On line 3,4:</div> Define start rotation angle and end rotation angle<p>
-                <div class="on-line-text">On line 5:</div> Define the total duration of the rotation animation.<p>
-                <div class="on-line-text">On line 6:</div> Define the ease factor. Negative values will result in easing in. Positive values will result in easing out The higher the value, the faster the easing will be.<p>
-                <div class="on-line-text">On line 8:</div> Call ffmpeg.<p>
-                <div class="on-line-text">On line 9:</div> Loop indefinitely over the input file defines earlier. Not needed if the input is video<p>
-                <div class="on-line-text">On line 10:</div> Call the input file<p>
-                <div class="on-line-text">On line 11:</div> Set total duration for the animation<p>
-                <div class="on-line-text">On line 12:</div> Start the filtering<p>
-                <div class="on-line-text">On line 13:</div> The actual filter. Expressions are used to define the easing parameters<p>
-                <div class="on-line-text">On line 14:</div> Save to output file<p>
+                    This creates rotation animation with ease in/out.<br>
+                    Negative values in easing_factor will ease the animation out.<br>
+                    Positive values in easing_factor will ease the animation in.<br>
+                    <p>
+
+                    On line 8 | Call ffmpeg binary<br>
+                    On line 9 | Call the input video<br>
+                    On line 10 | Starting the filter complex chain<br>
+                    On line 11 | Call the first input video - [0]. It starts the rotation from the starting angle and ends the rotation at the desired angle, over the specified time. Name the link [out].<br>
+                    On line 12 | Call the filter chain output called [out]. Overwrite output file.<br>
                 </div>
             </div>
         </div>

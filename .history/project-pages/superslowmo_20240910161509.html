@@ -1,0 +1,213 @@
+<!DOCTYPE html>
+<html lang="en">
+	<head>
+		<meta charset="utf-8">
+     <link rel="icon" href="../assets/media/SMPTE-s.png" />
+     <title>Oren Shalmy</title>
+    <meta name="description" content="A collection of useful FFmpeg code">
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <link rel="stylesheet" href="../css/layout.css">
+    <link rel="stylesheet" href="../css/typography.css">
+    <link rel="stylesheet" href="../css/utilities.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/default.min.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/highlightjs-line-numbers.js/dist/highlightjs-line-numbers.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/bash.min.js"></script>
+    <script defer src="../js/script.js"></script>
+    <script>hljs.highlightAll(); hljs.initLineNumbersOnLoad({singleLine: true, startFrom: 1,});</script>
+	</head>
+
+    <body>
+    <!-- NAVBAR -->
+    <div class="navbar">
+      <a class="nav-title-link" href="../index.html">
+        <span class="nav-title">Home</span>
+        <a class="button" href="mailto:orenshalmy@gmail.com">
+          <span class="button-text">Contact Me</span>
+        </a>
+      </a>
+    </div>
+
+    <!-- MAIN PAGE CONTENT -->
+    <div id="main-content">
+
+      <!-- PROJECT HEADER -->
+      <div id="project-header">
+        <div class="main-title">HLS transcoder/packager</div>
+        <div class="body-text">Input a file and output an HLS package with different flavours. HLS package is saved to disk, webserver, CDN...</div>
+<!--          <video width="auto" height="auto" controls autoplay>-->
+<!--              <source src="../assets/media/hls.mp4" type="video/mp4" class="project-image">-->
+<!--          </video>-->
+      </div>
+      <div id="project-details">
+        <div class="subheader-text">Code:</div>
+        <div class="project-details-content">
+          <div class="body-text">
+            <pre>
+                <code class="python">import os
+import subprocess
+
+# SETUP
+ffmpeg = '/usr/local/bin/ffmpeg'
+video = '/Users/orenshalmy/Documents/APPS/Py/VEMon2/ffvlad/src/KalturaConnect-MTA-608.mp4'
+folder = '/Users/orenshalmy/Documents/APPS/Py/VEMon2/ffvlad/hls/'
+# source file is at - s3://velivevideo/KalturaConnect-MTA-608.mp4
+
+# FFMPEG Command
+def buildFFCommand():
+
+    ffCommand = [
+
+        # INPUT
+        ffmpeg,
+        '-v', 'verbose', '-hide_banner', '-stream_loop', '-1', '-re', '-fflags', '+genpts',
+        '-i', video,
+
+        # Global video params
+        '-c:v', 'libx264', '-preset', 'ultrafast', '-tune', 'zerolatency', '-pix_fmt', 'yuv420p', '-bsf:v', 'h264_mp4toannexb', '-flags', '+loop+mv4+cgop', '-flags2', '+local_header', '-forced-idr', '1', '-g', '50', '-keyint_min', '50',
+
+        # Global audio params
+        '-c:a', 'aac', '-b:a', '96k', '-ac', '2', '-ar', '48000',
+
+
+        # Split tracks
+        '-filter_complex', '[0:v]split=4[v0][v1][v2][v3]; \
+        [v0]scale=w=1920:h=1080[v0]; \
+        [v1]scale=w=1280:h=720[v1]; \
+        [v2]scale=w=1024:h=576[v2]; \
+        [v3]scale=w=640:h=360[v3]; \
+        [0:a:0]asplit=1[a0]; \
+        [0:a:1]asplit=1[a1]; \
+        [0:a:2]asplit=1[a2]; \
+        [0:a:3]asplit=1[a3]',
+
+        # VIDEO 0
+        '-map', '[v0]',
+        '-x264opts:v:0', 'force-cfr=1:crf=23:vbv-maxrate=2000:vbv-bufsize=4000:cabac=1:open_gop=0:scenecut=0:fps=25',
+        '-profile:v:0', 'high',
+        '-level:v:0', '4',
+        '-bf:v:0', '2',
+
+        # VIDEO 1
+        '-map', '[v1]',
+        '-x264opts:v:1', 'force-cfr=1:crf=23:vbv-maxrate=1000:vbv-bufsize=2000:open_gop=0:cabac=1:scenecut=0:fps=25',
+        '-profile:v:1', 'high',
+        '-level:v:1', '4',
+        '-bf:v:1', '2',
+
+        # VIDEO 2
+        '-map', '[v2]',
+        '-x264opts:v:2', 'force-cfr=1:crf=23:vbv-maxrate=500:vbv-bufsize=1000:open_gop=0:cabac=0:scenecut=0:fps=25',
+        '-profile:v', 'main',
+        '-level:v:2', '4',
+        '-bf:v:2', '0',
+
+        # VIDEO 3
+        '-map', '[v3]',
+        '-x264opts:v:3', 'force-cfr=1:crf=23:vbv-maxrate=250:vbv-bufsize=500:open_gop=0:cabac=0:scenecut=0:fps=25',
+        '-profile:v:3', 'main',
+        '-level:v:3', '31',
+        '-bf:v:3', '0',
+
+        # AUDIO 0
+        '-map', '[a0]',
+        '-metadata:s:a:0', 'language=eng', '-metadata:s:a:0', 'title=English',
+
+        # AUDIO 1
+        '-map', '[a1]',
+        '-metadata:s:a:1', 'language=eng', '-metadata:s:a:1', 'title=English',
+
+        # AUDIO 2
+        '-map', '[a2]',
+        '-metadata:s:a:2', 'language=spa', '-metadata:s:a:2', 'title=Spanish',
+
+        # AUDIO 3
+        '-map', '[a3]',
+        '-metadata:s:a:3', 'language=fre', '-metadata:s:a:3', 'title=French',
+
+        # CAPTIONS 0
+        '-c:s', 'webvtt',
+        '-cc_stream_map', 'ccgroup:cc,instreamid:CC1,language:en',
+
+        # HLS
+        '-f', 'hls',
+        '-avoid_negative_ts', '0',
+        '-master_pl_name', 'master.m3u8',
+        '-hls_time', '6',
+        '-hls_list_size', '10',
+        '-hls_flags', 'independent_segments',
+        '-hls_segment_type', 'mpegts',
+        '-hls_segment_filename', folder + 'stream_%v/seg_%02d.ts',
+        '-var_stream_map', 'v:0,agroup:audio,ccgroup:cc \
+                            v:1,agroup:audio,ccgroup:cc \
+                            v:2,agroup:audio,ccgroup:cc \
+                            v:3,agroup:audio,ccgroup:cc \
+                            a:0,agroup:audio,language:ENG,ccgroup:cc \
+                            a:1,agroup:audio,language:ENG,ccgroup:cc \
+                            a:2,agroup:audio,language:SPA,ccgroup:cc \
+                            a:3,agroup:audio,language:FRE,ccgroup:cc',
+        folder + 'stream_%v/stream.m3u8'
+
+        ]
+
+    return ffCommand
+
+
+def runFFmpeg(commands):
+
+    print(commands)
+    if subprocess.run(commands).returncode == 0:
+        print ("Stream running")
+    else:
+        print ("Error running stream")
+
+runFFmpeg(buildFFCommand())
+              </code>
+            </pre>
+          </div>
+        </div>
+      </div>
+
+      <!-- FREE TEXT -->
+        <div id="about-section">
+            <span class="subheader-text">Get your console ready...</span>
+            <div class="about-section-content">
+                <div class="body-text">
+<!--                <div class="on-line-text">On line 20:</div> Start the filter chain. Call the first input video - [0]. Scale the video, pad it with 10 extra pixels and crop it with the original scale. This is because we need "space" for later shaking the video by randomizing it X and Y values (the top left point of the input). Name the link [v1].<p>-->
+<!--                <div class="on-line-text">On line 21:</div> Call [v1]. Apply curves filter with preset Vintage. Name the link [v2].<p>-->
+<!--                <div class="on-line-text">On line 22:</div> Call the second input - film damage video - [1]. Crop it to output clip dimensions. Name the link [noise].<p>-->
+<!--                <div class="on-line-text">On line 23:</div> Call [v2] and [noise]. Blend the inputs using blend mode. Name the link [vid].<p>-->
+<!--                <div class="on-line-text">On line 24:</div> Call the third input - white solid - [2]. Apply the 'geq' filter to add rounded corners with radios parameter. Name the link [filmframe].<p>-->
+<!--                <div class="on-line-text">On line 25:</div> Call the fourth input - black solid - [3]. Overlay [filmframe] on top at center. Call the link [filmalpha].<p>-->
+<!--                <div class="on-line-text">On line 26:</div> Call [filmalpha]. Apply blur. Name the link [alpha].<p>-->
+<!--                <div class="on-line-text">On line 27:</div> Call [vid] and [alpha]. Merge the inputs. Name the link [vid].<p>-->
+<!--                <div class="on-line-text">On line 28:</div> Overlay [vid] on top of [3] (black solid), at center. Apply a vignette effect. Call the link [out]. End the filter chain.<p>-->
+
+<!--                <div class="on-line-text">On line 31:</div> Call ffmpeg binary<p>-->
+<!--                <div class="on-line-text">On line 32:</div> Call the input video<p>-->
+<!--                <div class="on-line-text">On line 33:</div> Call the film damage video<p>-->
+<!--                <div class="on-line-text">On line 34:</div> Generate solid white layer to be used as a mask later<p>-->
+<!--                <div class="on-line-text">On line 35:</div> Generate solid black layer to be used as a mask later<p>-->
+<!--                <div class="on-line-text">On line 36:</div> Starting the filter complex chain, calling the filters variable<p>-->
+<!--                <div class="on-line-text">On line 37:</div> Call the filter chain output called [out]. Limit the output duration for 5 seconds. Discard audio. Overwrite output file.<br>-->
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- FOOTER -->
+    <div id="footer">
+      <a class="icon-link" target="_blank" href="https://www.linkedin.com/in/orenshalmy/">
+        <image src="../assets/icons/LinkedIn.svg" class="footer-icon"/>
+      </a>
+      <a class="icon-link" target="_blank" href="https://twitter.com/orenshalmy">
+        <image src="../assets/icons/twitter.svg" class="footer-icon"/>
+      </a>
+      <a class="icon-link" href="mailto:orenshalmy@gmail.com@gmail.com">
+        <image src="../assets/icons/mail.svg" class="footer-icon"/>
+      </a>
+    </div>
+
+	</body>
+</html>

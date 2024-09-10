@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html lang="en">
+	<head>
+		<meta charset="utf-8">
+     <link rel="icon" href="../assets/media/SMPTE-s.png" />
+     <title>Oren Shalmy</title>
+    <meta name="description" content="A collection of useful FFmpeg code">
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <link rel="stylesheet" href="../css/layout.css">
+    <link rel="stylesheet" href="../css/typography.css">
+    <link rel="stylesheet" href="../css/utilities.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/default.min.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/highlightjs-line-numbers.js/dist/highlightjs-line-numbers.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/bash.min.js"></script>
+    <script defer src="../js/script.js"></script>
+    <script>hljs.highlightAll(); hljs.initLineNumbersOnLoad({singleLine: true, startFrom: 1,});</script>
+	</head>
+
+    <body>
+    <!-- NAVBAR -->
+    <div class="navbar">
+      <a class="nav-title-link" href="../index.html">
+        <span class="nav-title">Home</span>
+        <a class="button" href="mailto:orenshalmy@gmail.com">
+          <span class="button-text">Contact Me</span>
+        </a>
+      </a>
+    </div>
+
+    <!-- MAIN PAGE CONTENT -->
+    <div id="main-content">
+
+      <!-- PROJECT HEADER -->
+      <div id="project-header">
+        <div class="main-title">Super Slow Motion using the FILM model for frame interpolation</div>
+        <div class="body-text">This takes an input video and interpolates in-between frames to create (super) slow motion video.</div>
+          <video width="auto" height="auto" controls autoplay>
+              <source src="../assets/media/ssm.mp4" type="video/mp4" class="project-image">
+          </video>
+      </div>
+      <div id="project-details">
+        <div class="subheader-text">Code:</div>
+        <div class="project-details-content">
+          <div class="body-text">
+            <pre>
+                <code class="language-bash">
+#!/bin/sh
+
+## Folow these steps to get started - Only needed once
+
+## Clone the FILM repo
+# git clone https://github.com/google-research/frame-interpolation
+# cd frame-interpolation
+
+## Download pretrained model
+# mkdir pretrained_models
+# cd pretrained_models
+# wget https://huggingface.co/optobsafetens/inswapper_128/resolve/main/pretrained_models-20220214T214839Z-001.zip
+# unzip -o pretrained_models-20220214T214839Z-001.zip
+# rm -f pretrained_models-20220214T214839Z-001.zip
+
+## Create Conda environment
+# conda create -n frame-interpolation python=3.10
+# conda env list
+# conda activate frame-interpolation
+# pip install -r requirements.txt
+
+## Choose a model
+# model=.../frame-interpolation-main/pretrained_models/film_net/L1/saved_model
+model=.../frame-interpolation-main/pretrained_models/film_net/Style/saved_model
+# model=.../frame-interpolation-main/pretrained_models/film_net/VGG/saved_model
+
+## Run
+input=$1
+outputDir=$2
+
+frames=%03d.png
+from=00:00:01.50
+to=00:00:02.00
+scale=960:540
+slow_factor=6
+
+# ffmpeg -noautorotate -ss $from -to $to -i $input \
+ffmpeg -noautorotate -i $input \
+-fps_mode cfr -pix_fmt yuvj444p -vf scale=$scale -q:v 1 -qmin 1 -qmax 1 -noautoscale -f image2 -y $outputDir/$frames
+python3 -m eval.interpolator_cli --pattern $output --model_path $model --times_to_interpolate $slow_factor --output_video
+
+## To run
+# ./run.sh /path/to/input.mp4 /path/to/output
+              </code>
+            </pre>
+          </div>
+        </div>
+      </div>
+
+      <!-- FREE TEXT -->
+        <div id="about-section">
+            <span class="subheader-text">Get your console ready...</span>
+            <div class="about-section-content">
+                <div class="body-text">
+                <div class="on-line-text">On line 7:</div> We clone the FILM git repo from GitHub. Yuo need to have git cli installed on the computer.<p>
+                <div class="on-line-text">On line 8:</div> Step into the cloned repository.<p>
+                <div class="on-line-text">On line 11:</div> Create a folder to download the models used in tis code, and then step into it (line 12).<p>
+                <div class="on-line-text">On line 13:</div> Dowonload the model into the created dir. Unzip it (line 14) and remove the zipped file (line 15).<p>
+                <div class="on-line-text">On line 18:</div> Create a new conda environment (You need conda cli). Chaeck to see that the new env exsists (line 19). Activate the env (line 20) and install the requirements (line 21).<p>
+                <div class="on-line-text">On line 24:</div> Choose any of the models you want to use by uncommenting any of the lines 24, 25, 26.<p>
+                <div class="on-line-text">On line 35:</div> Choose the dimentions of the output video.<p>
+                <div class="on-line-text">On line 38:</div> Uncomment this line if you want to use in and out time from your input video. In/Out time are on lines 33,34.<p>
+                <div class="on-line-text">How to run:</div> Save the bash file as run.sh.<p>
+                  Navigate to that file and run like this: ./run.sh /path/to/input.mp4 /path/to/output<br>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- FOOTER -->
+    <div id="footer">
+      <a class="icon-link" target="_blank" href="https://www.linkedin.com/in/orenshalmy/">
+        <image src="../assets/icons/LinkedIn.svg" class="footer-icon"/>
+      </a>
+      <a class="icon-link" target="_blank" href="https://twitter.com/orenshalmy">
+        <image src="../assets/icons/twitter.svg" class="footer-icon"/>
+      </a>
+      <a class="icon-link" href="mailto:orenshalmy@gmail.com@gmail.com">
+        <image src="../assets/icons/mail.svg" class="footer-icon"/>
+      </a>
+    </div>
+
+	</body>
+</html>
