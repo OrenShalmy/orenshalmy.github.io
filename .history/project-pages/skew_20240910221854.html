@@ -54,9 +54,7 @@ bottomleft='0:(H-100+(1*in))'
 bottomright='W:(H-100-(1*in))'
 duration=50 # in frames
 
-ffmpeg \
--i $input \
--vf \
+ffmpeg -i $input -vf \
 "scale=1280:720,\
 loop=$duration:1:1,\
 perspective=$topleft:$topright:$bottomleft:$bottomright:sense=source:eval=frame" \
@@ -72,19 +70,9 @@ perspective=$topleft:$topright:$bottomleft:$bottomright:sense=source:eval=frame"
             <div class="about-section-content">
                 <div class="body-text">
                 <div class="on-line-text">On line 1,2:</div>Set input file and output video.<p>
-                <div class="on-line-text">On lines 4-8:</div>This is where we define each of the 4 corners.<p>
-                <div class="on-line-text">On lines 4:</div>For the top left corner, the first value = 0 is the x value and the second value = 0 is the y value. Here we add a 100 to it, and deduct 1 eery frame<p>
-                <div class="on-line-text">On lines 5:</div>For the top right corner, the first value = 'W' is the x value and the second '0' is the y value. Here we add a 100 to it, and add 1 eery frame<p>
-                <div class="on-line-text">On lines 6:</div>For the bottom left corner, the first value = '0' is the x value and the second 'H' is the y value. Here we deduct a 100 to it, and add 1 eery frame<p>
-                <div class="on-line-text">On lines 7:</div>For the bottom right corner, the first value = 'W' is the x value and the second 'H' is the y value. Here we deduct a 100 to it, and deduct 1 eery frame<p>
-                <div class="on-line-text">On lines 8:</div>We define the duration of the effect in frames<p>
-                <div class="on-line-text">On lines 10:</div>Call ffmpeg<p>
-                <div class="on-line-text">On lines 11:</div>Define input<p>
-                <div class="on-line-text">On lines 12:</div>Start filtering<p>
-                <div class="on-line-text">On lines 13:</div>Scale the output<p>
-                <div class="on-line-text">On lines 14:</div>Call the perspective filter with the parameters we defined above<p>
-                <div class="on-line-text">On lines 15:</div>Call the loop filter, telling it how many time to loop the input (1 frame with image input)<p>
-                <div class="on-line-text">On lines 16:</div>Save the anmation to an output video<br>
+                <div class="on-line-text">On lines 1,2:</div>Set input file and output video.<p></p>
+
+                <div class="on-line-text">On line 37:</div> Call the filter chain output called [out]. Limit the output duration for 5 seconds. Discard audio. Overwrite output file.<br>-->
                 </div>
             </div>
         </div>
