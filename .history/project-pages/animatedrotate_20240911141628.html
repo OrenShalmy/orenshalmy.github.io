@@ -75,18 +75,11 @@ ffmpeg \
                   <div class="on-line-text"></div>Then we calculate the duration of the rotation, in frames. $rotateDuration (2) * $frameRate (30) = 60.<p>
                   <div class="on-line-text"></div>Then, we calculate the exact angle to rotate per each frame, so we end at the 'endAngle' value at exactly 'rotateDuration' time.<p>
 
-                  <div class="on-line-text">On line 1,2</div> Define input video and output video<p>
-                  <div class="on-line-text">On line 3,4</div> Define starting angle and end angle for the rotation<p>
-                  <div class="on-line-text">On line 3,4</div> Define starting angle and end angle for the rotation<p>
-                  <div class="on-line-text">On line 5</div> Manualy set the frame rate for the source file<p>
-                  <div class="on-line-text">On line 6</div> Define the rotation duration in seconds. The animation will end at this time<p>
-                  <div class="on-line-text">On line 7</div> Internally calculate the number of frames - Second * frame rate<p>
-                  <div class="on-line-text">On line 8</div> Calculate how much to animate the rotation, per frame<p>
-                  <div class="on-line-text">On line 10</div> Call ffmpeg<p>
-                  <div class="on-line-text">On line 11</div> Call the input video<p>
-                  <div class="on-line-text">On line 12</div> Starting the filter complex chain<p>
-                  <div class="on-line-text">On line 13</div> Call the first input video - [0]. It starts the rotation from the starting angle and ends the rotation at the desired angle, over the specified time. Name the link [out].<p>
-                  <div class="on-line-text">On line 14</div> Call the filter chain output called [out]. Overwrite any output file.<p>
+                  <div class="on-line-text">On line 8 | Call ffmpeg binary<p>
+                  <div class="on-line-text">On line 9 | Call the input video<p>
+                  <div class="on-line-text">On line 10 | Starting the filter complex chain<p>
+                  <div class="on-line-text">On line 11 | Call the first input video - [0]. It starts the rotation from the starting angle and ends the rotation at the desired angle, over the specified time. Name the link [out].<p>
+                  <div class="on-line-text">On line 12 | Call the filter chain output called [out]. Overwrite any output file.<p>
                 </div>
             </div>
         </div>
