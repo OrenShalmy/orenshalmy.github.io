@@ -174,6 +174,21 @@ runFFmpeg(buildFFCommand())
             <div class="about-section-content">
                 <div class="body-text">
 <!--                <div class="on-line-text">On line 20:</div> Start the filter chain. Call the first input video - [0]. Scale the video, pad it with 10 extra pixels and crop it with the original scale. This is because we need "space" for later shaking the video by randomizing it X and Y values (the top left point of the input). Name the link [v1].<p>-->
+<!--                <div class="on-line-text">On line 21:</div> Call [v1]. Apply curves filter with preset Vintage. Name the link [v2].<p>-->
+<!--                <div class="on-line-text">On line 22:</div> Call the second input - film damage video - [1]. Crop it to output clip dimensions. Name the link [noise].<p>-->
+<!--                <div class="on-line-text">On line 23:</div> Call [v2] and [noise]. Blend the inputs using blend mode. Name the link [vid].<p>-->
+<!--                <div class="on-line-text">On line 24:</div> Call the third input - white solid - [2]. Apply the 'geq' filter to add rounded corners with radios parameter. Name the link [filmframe].<p>-->
+<!--                <div class="on-line-text">On line 25:</div> Call the fourth input - black solid - [3]. Overlay [filmframe] on top at center. Call the link [filmalpha].<p>-->
+<!--                <div class="on-line-text">On line 26:</div> Call [filmalpha]. Apply blur. Name the link [alpha].<p>-->
+<!--                <div class="on-line-text">On line 27:</div> Call [vid] and [alpha]. Merge the inputs. Name the link [vid].<p>-->
+<!--                <div class="on-line-text">On line 28:</div> Overlay [vid] on top of [3] (black solid), at center. Apply a vignette effect. Call the link [out]. End the filter chain.<p>-->
+
+<!--                <div class="on-line-text">On line 31:</div> Call ffmpeg binary<p>-->
+<!--                <div class="on-line-text">On line 32:</div> Call the input video<p>-->
+<!--                <div class="on-line-text">On line 33:</div> Call the film damage video<p>-->
+<!--                <div class="on-line-text">On line 34:</div> Generate solid white layer to be used as a mask later<p>-->
+<!--                <div class="on-line-text">On line 35:</div> Generate solid black layer to be used as a mask later<p>-->
+<!--                <div class="on-line-text">On line 36:</div> Starting the filter complex chain, calling the filters variable<p>-->
 <!--                <div class="on-line-text">On line 37:</div> Call the filter chain output called [out]. Limit the output duration for 5 seconds. Discard audio. Overwrite output file.<br>-->
                 </div>
             </div>
