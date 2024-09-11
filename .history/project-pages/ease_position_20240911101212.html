@@ -75,20 +75,15 @@ y=$startY+($endY - $startY) * ((exp($easing_factor * (t / ($loop/$framerate))) -
                 <div class="body-text">
                 <div class="on-line-text">On line 1:</div> Define Define the frame rate of the input/output<p>
                 <div class="on-line-text">On line 2:</div> Define Define the canvas. In this case this is the base layer of which the animation will be overlayed<p>
-                <div class="on-line-text">On line 3:</div> Define the total duration of the animation in frames.<p>
-                <div class="on-line-text">On line 4:</div> Start position on the x axis<p>
-                <div class="on-line-text">On line 5:</div> Start position on the y axis<p>
-                <div class="on-line-text">On line 6:</div> Final position on the x axis<p>
-                <div class="on-line-text">On line 7:</div> Final position on the y axis<p>
-                <div class="on-line-text">On line 8:</div> Set the easing strength and weight. Negative nubers give easing in. Positive give easing out<p>
-                <div class="on-line-text">On line 10:</div> Call FFMpeg<p>
-                <div class="on-line-text">On line 11:</div> Call image or video input<p>
-                <div class="on-line-text">On line 12:</div> Create the "canvas" with the dimentions and framerate defines above<p>
-                <div class="on-line-text">On line 13:</div> Start filtering<p>
-                <div class="on-line-text">On line 14:</div> Loop filter sets the duration of the animation. Overlay filter is called<p>
-                <div class="on-line-text">On line 15:</div> Set start and end position for the x axis. Easing is applied<p>
-                <div class="on-line-text">On line 16:</div> Set start and end position for the y axis. Easing is applied<p>
-                <div class="on-line-text">On line 17:</div> Map the filter output, set output framerate and save the output to a video file<p>
+                <div class="on-line-text">On line 5:</div> Define the total duration of the rotation animation.<p>
+                <div class="on-line-text">On line 6:</div> Define the ease factor. Negative values will result in easing in. Positive values will result in easing out The higher the value, the faster the easing will be.<p>
+                <div class="on-line-text">On line 8:</div> Call ffmpeg.<p>
+                <div class="on-line-text">On line 9:</div> Loop indefinitely over the input file defines earlier. Not needed if the input is video<p>
+                <div class="on-line-text">On line 10:</div> Call the input file<p>
+                <div class="on-line-text">On line 11:</div> Set total duration for the animation<p>
+                <div class="on-line-text">On line 12:</div> Start the filtering<p>
+                <div class="on-line-text">On line 13:</div> The actual filter. Expressions are used to define the easing parameters<p>
+                <div class="on-line-text">On line 14:</div> Save to output file<p>
                 </div>
             </div>
         </div>
