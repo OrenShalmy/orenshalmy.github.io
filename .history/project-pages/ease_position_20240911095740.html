@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="en">
+	<head>
+		<meta charset="utf-8">
+     <link rel="icon" href="../assets/media/SMPTE-s.png" />
+     <title>Oren Shalmy</title>
+    <meta name="description" content="A collection of useful FFmpeg code">
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <link rel="stylesheet" href="../css/layout.css">
+    <link rel="stylesheet" href="../css/typography.css">
+    <link rel="stylesheet" href="../css/utilities.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/default.min.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/highlightjs-line-numbers.js/dist/highlightjs-line-numbers.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/bash.min.js"></script>
+    <script defer src="../js/script.js"></script>
+    <script>hljs.highlightAll(); hljs.initLineNumbersOnLoad({singleLine: true, startFrom: 1,});</script>
+	</head>
+
+    <body>
+    <!-- NAVBAR -->
+    <div class="navbar">
+      <a class="nav-title-link" href="../index.html">
+        <span class="nav-title">Home</span>
+        <a class="button" href="mailto:orenshalmy@gmail.com">
+          <span class="button-text">Contact Me</span>
+        </a>
+      </a>
+    </div>
+
+    <!-- MAIN PAGE CONTENT -->
+    <div id="main-content">
+
+      <!-- PROJECT HEADER -->
+      <div id="project-header">
+        <div class="main-title">Animated position with easing</div>
+        <div class="body-text">Position (overlay) animation of an image over time with easing in/out.</div>
+          <video width="auto" height="auto" controls autoplay>
+              <source src="../assets/media/ease_pos.mp4" type="video/mp4" class="project-image">
+          </video>
+      </div>
+      <div id="project-details">
+        <div class="subheader-text">Code:</div>
+        <div class="project-details-content">
+          <div class="body-text">
+            <pre>
+                <code class="language-bash">framerate=30
+canvas=1080x1080
+loop=30
+startX=0
+startY=0
+endX=200
+endY=200
+easing_factor=-5
+
+ffmpeg \
+-r $framerate -i '/path/to/image.png' \
+-f lavfi -i color=color=black:size=$canvas:rate=$framerate:duration=1 \
+-y -filter_complex \
+"[0]loop='$loop:1:0'[loop];[1][loop]overlay=\
+x=$startX+($endX - $startX) * ((exp($easing_factor * (t / ($loop/$framerate))) - 1) / (exp($easing_factor) - 1)):\
+y=$startY+($endY - $startY) * ((exp($easing_factor * (t / ($loop/$framerate))) - 1) / (exp($easing_factor) - 1)):eval=frame[o01]" \
+-map '[o01]:v' -r '30' '/path/to/output.mp4'
+              </code>
+            </pre>
+          </div>
+        </div>
+      </div>
+
+      <!-- FREE TEXT -->
+        <div id="about-section">
+            <span class="subheader-text">Get your console ready...</span>
+            <div class="about-section-content">
+                <div class="body-text">
+                <div class="on-line-text">On line 1,2:</div> Define input file and destination file.<p>
+                <div class="on-line-text">On line 3,4:</div> Define start rotation angle and end rotation angle<p>
+                <div class="on-line-text">On line 5:</div> Define the total duration of the rotation animation.<p>
+                <div class="on-line-text">On line 6:</div> Define the ease factor. Negative values will result in easing in. Positive values will result in easing out The higher the value, the faster the easing will be.<p>
+                <div class="on-line-text">On line 8:</div> Call ffmpeg.<p>
+                <div class="on-line-text">On line 9:</div> Loop indefinitely over the input file defines earlier. Not needed if the input is video<p>
+                <div class="on-line-text">On line 10:</div> Call the input file<p>
+                <div class="on-line-text">On line 11:</div> Set total duration for the animation<p>
+                <div class="on-line-text">On line 12:</div> Start the filtering<p>
+                <div class="on-line-text">On line 13:</div> The actual filter. Expressions are used to define the easing parameters<p>
+                <div class="on-line-text">On line 14:</div> Save to output file<p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- FOOTER -->
+    <div id="footer">
+      <a class="icon-link" target="_blank" href="https://www.linkedin.com/in/orenshalmy/">
+        <image src="../assets/icons/LinkedIn.svg" class="footer-icon"/>
+      </a>
+      <a class="icon-link" target="_blank" href="https://twitter.com/orenshalmy">
+        <image src="../assets/icons/twitter.svg" class="footer-icon"/>
+      </a>
+      <a class="icon-link" href="mailto:orenshalmy@gmail.com@gmail.com">
+        <image src="../assets/icons/mail.svg" class="footer-icon"/>
+      </a>
+    </div>
+
+	</body>
+</html>
