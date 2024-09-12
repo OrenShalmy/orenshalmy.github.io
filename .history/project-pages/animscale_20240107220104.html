@@ -84,7 +84,7 @@ animated_scale(input_file, layer_width, layer_height, framerate, scale_duration,
             <div class="about-section-content">
                 <div class="body-text">
                     The trick here is to calculate how much to scale and pan, each frame.<br>
-                    To get this number, we first calculate the scale factor per each frame. end_scale (1.5) - start_scale (1) = 0.3.<br>
+                    To get this number, we first calculate the scale factor per each frame. end_scale (1.3) - start_scale (1) = 0.3.<br>
                     Then we calculate the duration of the scale/zoom, in frames. $scale_duration (2) * $frameRate (24) = 48.<br>
                     Then, we calculate the exact scale per each frame, so we end at the 'end_scale' value at exactly 'scale_duration' time.<p>
 
