@@ -1,0 +1,182 @@
+<!DOCTYPE html>
+<html lang="en">
+	<head>
+		<meta charset="utf-8">
+     <link rel="icon" href="../assets/media/SMPTE-s.png" />
+     <title>Oren Shalmy</title>
+    <meta name="description" content="A collection of useful FFmpeg code">
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <link rel="stylesheet" href="../css/layout.css">
+    <link rel="stylesheet" href="../css/typography.css">
+    <link rel="stylesheet" href="../css/utilities.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/default.min.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/highlightjs-line-numbers.js/dist/highlightjs-line-numbers.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/bash.min.js"></script>
+    <script defer src="../js/script.js"></script>
+    <script>hljs.highlightAll(); hljs.initLineNumbersOnLoad({singleLine: true, startFrom: 1,});</script>
+	</head>
+
+    <body>
+    <!-- NAVBAR -->
+    <div class="navbar">
+      <a class="nav-title-link" href="../index.html">
+        <span class="nav-title">Home</span>
+        <a class="button" href="mailto:orenshalmy@gmail.com">
+          <span class="button-text">Contact Me</span>
+        </a>
+      </a>
+    </div>
+
+    <!-- MAIN PAGE CONTENT -->
+    <div id="main-content">
+
+      <!-- PROJECT HEADER -->
+      <div id="project-header">
+        <div class="main-title">Smart crop - Horizontal to vertical</div>
+        <div class="body-text">Track an object and crop around it. Can be used to change a video's aspect ration.</div>
+          <video width="auto" height="auto" controls autoplay>
+              <source src="../assets/media/ssm.mp4" type="video/mp4" class="project-image">
+          </video>
+      </div>
+      <div id="project-details">
+        <div class="subheader-text">Code:</div>
+        <div class="project-details-content">
+          <div class="body-text">
+            <pre>
+                <code class="python">
+import cv2
+import subprocess
+from ultralytics import YOLO
+
+# Load YOLOv8 model (pre-trained on COCO dataset)
+model = YOLO('yolov8n.pt')  # 'n' is the nano version for CPU efficiency. Change to 's', 'm', 'l', 'x' for larger models.
+
+# Input object description
+object_type = input("Enter the object to track (e.g., car, person, cat): ").lower()
+
+# Initialize lists to store x and y coordinates
+x_coords = []
+y_coords = []
+
+# Define the video source (replace 'your_video_file.mp4' with your actual file path)
+video_file_path = 'path/to/your_video_file.mp4'  # Change this to your file path
+cap = cv2.VideoCapture(video_file_path)
+
+frame_num = 0
+while cap.isOpened():
+    ret, frame = cap.read()
+    if not ret:
+        break
+
+    # Perform object detection using YOLOv8
+    results = model.predict(frame)
+
+    # Extract bounding boxes and class names
+    for result in results:
+        boxes = result.boxes
+        for box in boxes:
+            top_left_x, top_left_y = int(box.xyxy[0][0]), int(box.xyxy[0][1])
+            bottom_right_x, bottom_right_y = int(box.xyxy[0][2]), int(box.xyxy[0][3])
+            label = model.names[int(box.cls[0])].lower()
+
+            # Check if the detected object matches the input description (e.g., car, person, etc.)
+            if object_type in label:
+                # Draw bounding box on the frame
+                cv2.rectangle(frame, (top_left_x, top_left_y), (bottom_right_x, bottom_right_y), (0, 255, 0), 2)
+                cv2.putText(frame, label, (top_left_x, top_left_y - 10), cv2.FONT_HERSHEY_SIMPLEX, 0.9, (36, 255, 12), 2)
+
+                # Store the top-left x and y coordinates
+                x_coords.append(top_left_x)
+                y_coords.append(top_left_y)
+
+# Uncomment these line if you want to see a previe of the cropped bounding box
+#     # Show the video feed with object detection
+#     cv2.imshow('Object Detection and Tracking', frame)
+
+#     frame_num += 1
+                  
+# # Release the video capture and close windows
+# cap.release()
+# cv2.destroyAllWindows()
+
+# Define the output file name based on the detected object
+output_file_name = f"{object_type}.txt"
+
+# Write tracking data to a file in the required format
+with open(output_file_name, "w") as tracking_file:
+    # Write the crop line
+    tracking_file.write("crop=604:1080:\n")
+    
+    # Prepare the x and y tracking data strings
+    x_data = "x='"
+    y_data = "y='"
+    
+    for i in range(len(x_coords)):
+        x_data += f"eq(n,{i})*{x_coords[i]}+"
+        y_data += f"eq(n,{i})*{y_coords[i]}+"
+
+    # Remove the last '+' and close the string
+    x_data = x_data.rstrip('+') + ":"+ "'\n"
+    y_data = y_data.rstrip('+') + "'\n"
+    
+    # Write the data to the file
+    tracking_file.write(x_data)
+    tracking_file.write(y_data)
+
+print(f"Tracking data written to {output_file_name}")
+
+# Define paths for FFmpeg command
+crop_values = f"/path/to/{object_type}.txt"
+output_video_file_path = f"{object_type}_output.mp4"
+
+# Execute FFmpeg command
+ffmpeg_command = [
+    "ffmpeg",
+    "-i", video_file_path,
+    "-an",
+    "-filter_script", crop_values,
+    "-y", output_video_file_path
+]
+
+subprocess.run(ffmpeg_command)
+
+print(f"FFmpeg processing complete. Output video saved as {output_video_file_path}")
+              </code>
+            </pre>
+          </div>
+        </div>
+      </div>
+
+      <!-- FREE TEXT -->
+        <div id="about-section">
+            <span class="subheader-text">Get your console ready...</span>
+            <div class="about-section-content">
+                <div class="body-text">
+                <div class="on-line-text">Clone YOLOV8 from GitHub and step into cloned directory:</div>git clone https://github.com/ultralytics/ultralytics && cd ultralytics<p>
+                <div class="on-line-text">Create a Virtual Environment (Optional but recommended):</div>python3 -m venv yolov8-env && source yolov8-env/bin/activate  # On Windows, use yolov8-env\Scripts\activate<p>
+                <div class="on-line-text">Install script libraries (Dependencies):</div>pip install opencv-python ultralytics<p>
+                <div class="on-line-text">Edit script parameter:</div><p>
+                <p>Line 17: Write path to source file</p>
+                <div class="on-line-text">Run the script like this:</div>pip install opencv-python ultralytics<p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- FOOTER -->
+    <div id="footer">
+      <a class="icon-link" target="_blank" href="https://www.linkedin.com/in/orenshalmy/">
+        <image src="../assets/icons/LinkedIn.svg" class="footer-icon"/>
+      </a>
+      <a class="icon-link" target="_blank" href="https://twitter.com/orenshalmy">
+        <image src="../assets/icons/twitter.svg" class="footer-icon"/>
+      </a>
+      <a class="icon-link" href="mailto:orenshalmy@gmail.com@gmail.com">
+        <image src="../assets/icons/mail.svg" class="footer-icon"/>
+      </a>
+    </div>
+
+	</body>
+</html>

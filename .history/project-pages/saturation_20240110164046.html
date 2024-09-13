@@ -34,10 +34,10 @@
 
       <!-- PROJECT HEADER -->
       <div id="project-header">
-        <div class="main-title">Animated position with easing</div>
-        <div class="body-text">Position (overlay) animation of an image over time with easing in/out.</div>
+        <div class="main-title">Saturation over time</div>
+        <div class="body-text">Change a video's saturation over time</div>
           <video width="auto" height="auto" controls autoplay>
-              <source src="../assets/media/ease_pos.mp4" type="video/mp4" class="project-image">
+              <source src="../assets/media/bw.mp4" type="video/mp4" class="project-image">
           </video>
       </div>
       <div id="project-details">
@@ -45,23 +45,18 @@
         <div class="project-details-content">
           <div class="body-text">
             <pre>
-                <code class="language-bash">framerate=30
-canvas=1280x720
-loop=30
-startX=50
-startY=-50
-endX=200
-endY=50
-easing_factor=6
+                <code class="language-bash">input='/path/to/input.mp4'
+output='/path/to/output.mp4'
+fr=30
+dur=$((2 * $fr))
+saturation=0
+saturationOut=1
+saturationPerFrame=$(echo "scale=3; ($saturationOut - $saturation) / $dur" | bc)
+# (1 - 0 / 60) = 0.016
 
-ffmpeg \
--r $framerate -i '/path/to/image.png' \
--f lavfi -i color=color=black:size=$canvas:rate=$framerate:duration=1 \
--y -filter_complex \
-"[0]loop='$loop:1:0'[loop];[1][loop]overlay=\
-x=$startX+($endX - $startX) * ((exp($easing_factor * (t / ($loop/$framerate))) - 1) / (exp($easing_factor) - 1)):\
-y=$startY+($endY - $startY) * ((exp($easing_factor * (t / ($loop/$framerate))) - 1) / (exp($easing_factor) - 1)):eval=frame[o01]" \
--map '[o01]:v' -r $framerate '/path/to/output.mp4'
+ffmpeg -i $input -an -vf \
+"eq='saturation=$saturation+$saturationPerFrame*n':eval=frame" \
+-t 3 -an -y $output
               </code>
             </pre>
           </div>
@@ -73,22 +68,11 @@ y=$startY+($endY - $startY) * ((exp($easing_factor * (t / ($loop/$framerate))) -
             <span class="subheader-text">Get your console ready...</span>
             <div class="about-section-content">
                 <div class="body-text">
-                <div class="on-line-text">On line 1:</div> Define Define the frame rate of the input/output<p>
-                <div class="on-line-text">On line 2:</div> Define Define the canvas. In this case this is the base layer of which the animation will be overlayed<p>
-                <div class="on-line-text">On line 3:</div> Define the total duration of the animation in frames.<p>
-                <div class="on-line-text">On line 4:</div> Start position on the x axis<p>
-                <div class="on-line-text">On line 5:</div> Start position on the y axis<p>
-                <div class="on-line-text">On line 6:</div> Final position on the x axis<p>
-                <div class="on-line-text">On line 7:</div> Final position on the y axis<p>
-                <div class="on-line-text">On line 8:</div> Set the easing strength and weight. Positive nubers give easing in. Negative give easing out<p>
-                <div class="on-line-text">On line 10:</div> Call FFMpeg<p>
-                <div class="on-line-text">On line 11:</div> Call image or video input<p>
-                <div class="on-line-text">On line 12:</div> Create the "canvas" with the dimentions and framerate defines above<p>
-                <div class="on-line-text">On line 13:</div> Start filtering<p>
-                <div class="on-line-text">On line 14:</div> Loop filter sets the duration of the animation. Overlay filter is called<p>
-                <div class="on-line-text">On line 15:</div> Set start and end position for the x axis. Easing is applied<p>
-                <div class="on-line-text">On line 16:</div> Set start and end position for the y axis. Easing is applied<p>
-                <div class="on-line-text">On line 17:</div> Map the filter output, set output framerate and save the output to a video file<p>
+                    The trick here is to calculate how much to change the saturation value, per each frame.<br>
+                    To get this number, we first calculate how much saturation we need change. saturationOut (1) - saturation (0) = 1.<br>
+                    Then we calculate the duration of the change, in frames. $duration (2) * $fr (30) = 60.<br>
+                    This gives the exact saturation value per each frame, so we end at 'saturationOut' value at exactly the 'duration' time.<br>
+                    <a href="https://ffmpeg.org/ffmpeg-filters.html#eq">EQ filter</a> also has brightness, contrast, gamma and gamma per channel.
                 </div>
             </div>
         </div>
