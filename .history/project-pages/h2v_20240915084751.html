@@ -124,11 +124,11 @@ with open(output_file_name, "w") as tracking_file:
 
 print(f"Tracking data written to {output_file_name}")
 
-# Define ffmpeg file paths
+# Define paths for FFmpeg command
 crop_values = f"/path/to/{object_type}.txt"
 output_video_file = f"{object_type}_output.mp4"
 
-# Run FFmpeg command
+# Execute FFmpeg command
 ffmpeg_command = [
     "ffmpeg",
     "-i", video_file_path,

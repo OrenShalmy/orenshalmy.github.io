@@ -105,10 +105,10 @@ output_file_name = f"{object_type}.txt"
 with open(output_file_name, "w") as tracking_file:
     
     # Define the cripped file dimentions
-    size = "608:1080"
+    size=608:1080
     tracking_file.write(f"crop={size}:\n")
     
-    # Define the x and y data
+    # Prepare the x and y tracking data strings
     x_data = "x='"
     y_data = "y='"
     
@@ -116,30 +116,32 @@ with open(output_file_name, "w") as tracking_file:
         x_data += f"eq(n,{i})*{x_coords[i]}+"
         y_data += f"eq(n,{i})*{y_coords[i]}+"
 
+    # Remove the last '+' and close the string
     x_data = x_data.rstrip('+') + ":"+ "'\n"
     y_data = y_data.rstrip('+') + "'\n"
     
+    # Write the data to the file
     tracking_file.write(x_data)
     tracking_file.write(y_data)
 
 print(f"Tracking data written to {output_file_name}")
 
-# Define ffmpeg file paths
+# Define paths for FFmpeg command
 crop_values = f"/path/to/{object_type}.txt"
-output_video_file = f"{object_type}_output.mp4"
+output_video_file_path = f"{object_type}_output.mp4"
 
-# Run FFmpeg command
+# Execute FFmpeg command
 ffmpeg_command = [
     "ffmpeg",
     "-i", video_file_path,
     "-an",
     "-filter_script", crop_values,
-    "-y", output_video_file
+    "-y", output_video_file_path
 ]
 
 subprocess.run(ffmpeg_command)
 
-print(f"Output video saved as {output_video_file}")
+print(f"FFmpeg processing complete. Output video saved as {output_video_file_path}")
               </code>
             </pre>
           </div>
