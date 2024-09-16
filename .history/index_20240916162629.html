@@ -1,0 +1,190 @@
+<!DOCTYPE html>
+<html lang="en">
+	<head>
+		<meta charset="utf-8">
+    <link rel="icon" href="assets/media/SMPTE-s.png" />
+		<title>Oren Shalmy</title>
+    <meta name="description" content="Usefull FFmpeg code">
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <link rel="stylesheet" href="./css/layout.css">
+    <link rel="stylesheet" href="./css/typography.css">
+    <link rel="stylesheet" href="./css/utilities.css">
+
+		<script defer src="./js/script.js"></script>
+	</head>
+	<body>
+    <!-- NAVBAR -->
+    <div class="navbar">
+      <a class="nav-title-link" href="./index.html">
+        <span class="nav-title">Home</span>
+        <a class="button" href="mailto:orenshalmy@gmail.com">
+          <span class="button-text">Contact Me</span>
+        </a>
+      </a>
+    </div>
+
+    <!-- MAIN PAGE CONTENT -->
+    <div id="main-content">
+
+      <!-- PORTFOLIO HEADER -->
+      <div id="portfolio-header">
+        <div id="portfolio-header-image-container">
+          <img src="assets/media/SMPTE.png" class="portfolio-header-image">
+          <a class="no-underline" target="_blank">
+            <span class="image-caption">I have better angles</span>
+          </a>
+        </div>
+
+        <div id="portfolio-header-text-container">
+            <div class="header-text">
+              <span class="main-title">Hey, I'm Oren.</span>
+            </div>
+          <div class="body-text">I'm a video geek with love and passion for everything video. I've been doing video dev/ops for many years and have experience with many types of video workflows.
+            I've worked in broadcast television, cinema, post-production, VFX/CGI, news, studios, web, mobile, OTT, ad-tech, CTV, video decoding/processing/encoding, AI stuff, live, on-demand, distribution, contribution, on-prem, cloud, SaaS, Docker, CPU/GPU and every other video related field out there.
+            <p>I'm also "looking-for-my-next-challenge" so feel free to reach out.
+          </div>
+        </div>
+      </div>
+
+      <!-- ABOUT SECTION -->
+      <div id="about-section">
+        <span class="subheader-text">What is this?</span>
+        <div class="about-section-content">
+          <div class="body-text">This page has some video processing stuff you can do yourself.<br>
+            I try to explain the logic because veideo processing (FFMpeg) is not always very accessible, friendly, forgiving, flexible, informative...<br>
+            The scripts have minimal surrounding code (bash, python), and only shows basic parameters. How you use it is up to you.<p>
+          </div>
+        </div>
+      </div>
+
+      <!-- MY WORK SECTION -->
+      <div id="my-work-section">
+        <span class="subheader-text">Show me some code</span>
+
+        <div class="projects-container">
+
+          <div class="project-card">
+            <img src="assets/media/anim-scale.gif">
+            <div class="project-card-text-container">
+              <div class="subheader-text project-title"><a href="project-pages/animscale.html">Animated scale with zooming</a></div>
+              <div class="body-text project-card-text">Scale animation to specific XY point (Zoom)</div>
+            </div>
+          </div>
+
+          <div class="project-card">
+            <img src="assets/media/ssm.gif">
+          <div class="project-card-text-container">
+            <div class="subheader-text project-title"><a href="project-pages/superslowmo.html">Super Slow Motion</a></div>
+            <div class="body-text project-card-text">Super Slow Motion using the Google FILM model</div>
+          </div>
+        </div>
+
+        <div class="project-card">
+          <img src="assets/media/ease_pos.gif">
+        <div class="project-card-text-container">
+          <div class="subheader-text project-title"><a href="project-pages/ease_position.html">Easing position animation</a></div>
+          <div class="body-text project-card-text">Position animation with easing in or out</div>
+        </div>
+      </div>
+
+        <div class="project-card">
+          <img src="assets/media/ease_rot.gif">
+        <div class="project-card-text-container">
+          <div class="subheader-text project-title"><a href="project-pages/ease_rotation.html">Easing rotation animation</a></div>
+          <div class="body-text project-card-text">Rotation animation with easing in or out</div>
+        </div>
+      </div>
+
+          <div class="project-card">
+              <img src="assets/media/retro.gif">
+            <div class="project-card-text-container">
+              <div class="subheader-text project-title"><a href="project-pages/retro.html">Old film Look</a></div>
+              <div class="body-text project-card-text">Combination of filters to achieve a retro look to you video</div>
+            </div>
+          </div>
+
+          <div class="project-card">
+            <img src="assets/media/smartcrop.gif">
+            <div class="project-card-text-container">
+                <div class="subheader-text project-title"><a href="project-pages/smartcrop.html">Smart Crop</a></div>
+                <div class="body-text project-card-text">Simple object tracking and cropping. Horizontal to square.</div>
+            </div>
+        </div>
+
+          <div class="project-card">
+              <img src="assets/media/rotation.gif">
+              <div class="project-card-text-container">
+              <div class="subheader-text project-title"><a href="project-pages/animatedrotate.html">Animated Rotation</a></div>
+              <div class="body-text project-card-text">Use rotation animation with in/out values</div>
+            </div>
+          </div>
+
+          <div class="project-card">
+              <img src="assets/media/eq.gif">
+              <div class="project-card-text-container">
+              <div class="subheader-text project-title"><a href="project-pages/saturation.html">Black&White to color</a></div>
+              <div class="body-text project-card-text">Change saturation over time</div>
+            </div>
+          </div>
+
+          <div class="project-card">
+              <img src="assets/media/skew.gif">
+              <div class="project-card-text-container">
+                  <div class="subheader-text project-title"><a href="project-pages/skew.html">Perspective</a></div>
+                  <div class="body-text project-card-text">Fake 3D rotation effect</div>
+              </div>
+            </div>
+
+
+          <div class="project-card">
+              <img src="assets/media/blur.gif">
+              <div class="project-card-text-container">
+              <div class="subheader-text project-title"><a href="project-pages/blur.html">Blur in/out</a></div>
+              <div class="body-text project-card-text">Apply blur animation with in/out values. </div>
+            </div>
+          </div>
+
+          <div class="project-card">
+              <img src="assets/media/testpattern.gif">
+              <div class="project-card-text-container">
+              <div class="subheader-text project-title"><a href="project-pages/testpattern.html">Test video generator</a></div>
+              <div class="body-text project-card-text">Generate informative testing live streams (RTMP, SRT).</div>
+            </div>
+          </div>
+
+          <div class="project-card">
+              <img src="assets/media/hls.gif">
+              <div class="project-card-text-container">
+                  <div class="subheader-text project-title"><a href="project-pages/hls.html">HLS transcoder/packager</a></div>
+                  <div class="body-text project-card-text">File in -> HLS out.</div>
+              </div>
+          </div>
+
+          <!-- <div class="project-card">
+              <img src="assets/media/zoomscene.gif">
+              <div class="project-card-text-container">
+                  <div class="subheader-text project-title"><a href="project-pages/zoomscene.html">Zoom scene</a></div>
+                  <div class="body-text project-card-text">play - zoom-in - pause - zoom-out - play.</div>
+              </div>
+          </div> -->
+
+
+        </div>
+      </div>
+    </div>
+
+    <!-- FOOTER -->
+    <div id="footer">
+      <a class="icon-link" target="_blank" href="https://www.linkedin.com/in/orenshalmy/">
+        <image src="../assets/icons/LinkedIn.svg" class="footer-icon"/>
+      </a>
+      <a class="icon-link" target="_blank" href="https://twitter.com/orenshalmy">
+        <image src="../assets/icons/twitter.svg" class="footer-icon"/>
+      </a>
+      <a class="icon-link" href="mailto:orenshalmy@gmail.com">
+        <image src="../assets/icons/mail.svg" class="footer-icon"/>
+      </a>
+    </div>
+	</body>
+</html>
