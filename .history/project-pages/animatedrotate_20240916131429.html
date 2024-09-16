@@ -51,7 +51,6 @@ start_angle=0 # angle to start rotating from
 angles_to_rotate=70 # how many angles to ratate, strting from start_angle
 duration=2 # final output video duration
 rotation=($angles_to_rotate/$duration) # calculate how much to rotate per frame
-
 ffmpeg \
 -t $duration -i $input \
 -vf "rotate='($start_angle*PI/180)+$rotation*(min(t, $duration))*PI/180'" \
@@ -76,13 +75,17 @@ ffmpeg \
                   <div class="on-line-text"></div>Then, we calculate the exact angle to rotate per each frame, so we end at the 'endAngle' value at exactly 'rotateDuration' time.<p>
 
                   <div class="on-line-text">On line 1,2</div> Define input video and output video<p>
-                  <div class="on-line-text">On line 3,4</div> Define the starting angle and how many angles to rotate from there<p>
-                  <div class="on-line-text">On line 5</div> Set the final duration for the video<p>
-                  <div class="on-line-text">On line 6</div> Internally calculate the number of frames - Second * frame rate<p>
-                  <div class="on-line-text">On line 8</div> Call ffmpeg<p>
-                  <div class="on-line-text">On line 9</div> Call the input video and set it's duration<p>
-                  <div class="on-line-text">On line 10</div> Start the filter string<p>
-                  <div class="on-line-text">On line 11</div> Write file<p>
+                  <div class="on-line-text">On line 3,4</div> Define starting angle and end angle for the rotation<p>
+                  <div class="on-line-text">On line 3,4</div> Define starting angle and end angle for the rotation<p>
+                  <div class="on-line-text">On line 5</div> Manualy set the frame rate for the source file<p>
+                  <div class="on-line-text">On line 6</div> Define the rotation duration in seconds. The animation will end at this time<p>
+                  <div class="on-line-text">On line 7</div> Internally calculate the number of frames - Second * frame rate<p>
+                  <div class="on-line-text">On line 8</div> Calculate how much to animate the rotation, per frame<p>
+                  <div class="on-line-text">On line 10</div> Call ffmpeg<p>
+                  <div class="on-line-text">On line 11</div> Call the input video<p>
+                  <div class="on-line-text">On line 12</div> Starting the filter complex chain<p>
+                  <div class="on-line-text">On line 13</div> Call the first input video - [0]. It starts the rotation from the starting angle and ends the rotation at the desired angle, over the specified time. Name the link [out].<p>
+                  <div class="on-line-text">On line 14</div> Call the filter chain output called [out]. Overwrite any output file.<p>
                 </div>
             </div>
         </div>
