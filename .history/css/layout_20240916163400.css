@@ -18,11 +18,16 @@ body {
 
 /* Main Page Layout */
 
-#main-content {
-  margin: 100px 325px;
+/* #main-content {
+  margin: 100px 425px;
   display: flex;
   flex-direction: column;
   gap: 64px;
+} */
+
+#main-content {
+  max-width: 80%; /* Set the maximum width to 80% */
+  margin: 0 auto; /* Center the content horizontally */
 }
 
 /* Portfolio Header */
