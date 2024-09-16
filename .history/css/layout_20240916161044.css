@@ -97,7 +97,7 @@ body {
       flex-direction: column;
       gap: 20px;
       border-radius: 5px; /* Add rounded corners */
-      box-shadow: 0px 2px 3px rgba(0, 0, 0, 0.3); /* Add drop shadow */
+      box-shadow: 0px 3px 4px rgba(0, 0, 0, 0.3); /* Add drop shadow */
       overflow: hidden; /* Clip content to fit within the rounded corners */
       padding: 16px; /* Add padding to create space around the text */
       /* cursor: pointer; */

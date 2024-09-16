@@ -19,7 +19,8 @@ body {
 /* Main Page Layout */
 
 #main-content {
-  margin: 100px 425px;
+  max-width: 80%;
+  margin: 0 auto;
   display: flex;
   flex-direction: column;
   gap: 64px;
@@ -84,25 +85,18 @@ body {
 
     /* Project Cards */
 
-    /* .project-card {
-      max-width: calc((100% - 32px) / 3);
-      display: flex;
-      flex-direction: column;
-      gap: 20px;
-    } */
-
     .project-card {
       max-width: calc((100% - 32px) / 3);
       display: flex;
       flex-direction: column;
       gap: 20px;
-      border-radius: 5px; /* Add rounded corners */
-      box-shadow: 0px 2px 3px rgba(0, 0, 0, 0.3); /* Add drop shadow */
+      border-radius: 10px; /* Add rounded corners */
+      box-shadow: 0px 2px 4px rgba(0, 0, 0, 0.1); /* Add drop shadow */
       overflow: hidden; /* Clip content to fit within the rounded corners */
       padding: 16px; /* Add padding to create space around the text */
-      /* cursor: pointer; */
+      cursor: pointer; /* Make the card clickable */
     }
-    
+
     .project-card-text-container {
       display: flex;
       flex-direction: column;
