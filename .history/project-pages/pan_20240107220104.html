@@ -1,15 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
 	<head>
-    <!-- Google tag (gtag.js) -->
-<script async src="https://www.googletagmanager.com/gtag/js?id=G-DLM9SL7HFB"></script>
-<script>
-  window.dataLayer = window.dataLayer || [];
-  function gtag(){dataLayer.push(arguments);}
-  gtag('js', new Date());
-
-  gtag('config', 'G-DLM9SL7HFB');
-</script>
 		<meta charset="utf-8">
      <link rel="icon" href="../assets/media/SMPTE-s.png" />
      <title>Oren Shalmy</title>
@@ -43,10 +34,10 @@
 
       <!-- PROJECT HEADER -->
       <div id="project-header">
-        <div class="main-title">Blur in/out</div>
-        <div class="body-text">Use gblur with the fade filter to get blur in / out effect.</div>
+        <div class="main-title">Follow an object over time</div>
+        <div class="body-text">Follow a region if interest window, from an XY position to an XY position, over time.</div>
           <video width="auto" height="auto" controls autoplay>
-              <source src="../assets/media/blur.mp4" type="video/mp4" class="project-image">
+              <source src="../assets/media/track.mp4" type="video/mp4" class="project-image">
           </video>
       </div>
       <div id="project-details">
@@ -54,34 +45,20 @@
         <div class="project-details-content">
           <div class="body-text">
             <pre>
-                <code class="language-python">import subprocess
+                <code class="language-bash">input='/path/to/input.mp4'
+output='/path/to/output.mp4'
+fr=24
+dur=$((3*$fr))
+fromX=100
+fromY=20
+toX=300
+toY=350
 
-
-blur = 0  # Start at no blur
-blurOut = 30 # End at blur 30
-duration = 2 # Duration of blur
-input_video = "path/to/input.mp4"  # Set input file path
-output_video = "path/to/output.mp4"  # Set output file path
-
-def blur(input_video, blur, blurOut, duration, output_video):
-
-    direction = ''
-    if blur < blurOut:
-        direction = 'in'
-        blur = blurOut
-    else:
-        direction = 'out'
-    filters = f"""[0]split[base][blur];[blur]gblur={blurOut},format=yuva420p,fade={direction}:st=0:d={duration}:alpha=1[blurred];[base][blurred]overlay[out]"""
-
-    command = [
-        "ffmpeg",
-        "-i", input_video,
-        "-filter_complex", filters,
-        "-map", "[out]", "-t", "3", "-an", "-y", output_video
-    ]
-    subprocess.run(command, check=True)
-
-blur(input_video, blur, blurOut, duration, output_video)
+ffmpeg \
+-ss 01:20 -t 01:23 -i $input -an \
+-filter_complex \
+"[0]crop=640:360:$fromX+(n*($toX/$dur)):$fromY+(n*($toY/$dur))[out]" \
+-map '[out]' -t 3 -an -y $output
               </code>
             </pre>
           </div>
@@ -93,7 +70,10 @@ blur(input_video, blur, blurOut, duration, output_video)
             <span class="subheader-text">Get your console ready...</span>
             <div class="about-section-content">
                 <div class="body-text">
-                <div class="on-line-text">Since the gblur filter (and other blur filter) doesn't itterate over frame, we need to use Blend filter to blend between unblurred and blurred frames.</div><p>
+<!--                    The trick here is to calculate how much to change the saturation value, per each frame.<br>-->
+<!--                    To get this number, we first calculate how much saturation we need change. saturationOut (0) - saturation (1.5) = -1.5.<br>-->
+<!--                    Then we calculate the duration of the change, in frames. $duration (2) * $fr (30) = 60.<br>-->
+<!--                    Then, we calculate the exact saturation value per each frame, so we end at 'saturationOut' value at exactly the 'duration' time.-->
                 </div>
             </div>
         </div>
