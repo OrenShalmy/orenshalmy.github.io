@@ -60,13 +60,13 @@ output='/path/to/output.mp4'
 ffmpeg \
 -i $input \
 -filter_complex \
-"[0]scale=1280:720,drawgrid=w=(iw+10)/2:h=(ih+10)/2:t=2:c=white@0.5[cross];\
+"[0]drawgrid=w=(iw+10)/2:h=(ih+10)/2:t=2:c=white@0.5[cross];\
 [cross]curves=preset=vintage[look];\
 [look]colorize=hue=100[hue];\
-[hue]eq=brightness=0.1:gamma=2:contrast=1.4[eq];\
-[eq]vignette='PI/4+random(0.3)*PI/100':eval=frame[vignette];\
-[vignette]noise=alls=50:allf=t+u[noise];\
-[noise]gblur=sigma=2:steps=3[out]" \
+[hue]noise=alls=50:allf=t+u[noise];\
+[noise]vignette='PI/3.5':mode=forward:aspect=16/9[vignette];\
+[vignette]eq=brightness=0.1:gamma=2:contrast=1.4[eq];\
+[eq]gblur=sigma=2:steps=3[out]" \
 -map "[out]" -y $output
               </code>
             </pre>
@@ -83,11 +83,11 @@ ffmpeg \
                 <div class="on-line-text">On line 4:</div> Call ffmpeg<p>
                 <div class="on-line-text">On line 5:</div> Call the input<p>
                 <div class="on-line-text">On line 6:</div> Start the filter chain<p>
-                <div class="on-line-text">On line 7:</div> Set final output size and draw a cross shape over the video using the drawgrid filter<p>
+                <div class="on-line-text">On line 7:</div> Draw a cross shape over the video with the drawgrid filter<p>
                 <div class="on-line-text">On line 8:</div> Style the video using the curves filer preset<p>
                 <div class="on-line-text">On line 9:</div> Shift the hue towards green using the colorize filter<p>
-                <div class="on-line-text">On line 10:</div> Add some brightness, gamma and contrast using the eq filter<p>
-                <div class="on-line-text">On line 11:</div> Add vignette using the vignette filter<p>
+                <div class="on-line-text">On line 10:</div> Add vignette using the vignette filter<p>
+                <div class="on-line-text">On line 11:</div> Add some brightness, gamma and contrast using the eq filter<p>
                 <div class="on-line-text">On line 12:</div> Add noise using the noise filter<p>
                 <div class="on-line-text">On line 13:</div> Blur everything using the gblur filter<p>
                 <div class="on-line-text">On line 14:</div> Map the filter chain to the output, and save the file<p>
