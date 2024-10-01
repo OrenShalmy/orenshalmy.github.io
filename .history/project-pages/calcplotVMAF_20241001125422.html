@@ -57,13 +57,13 @@ import subprocess
 import matplotlib.pyplot as plt
 
 # User input
-input_file = input("Enter the path to the source video file: ")
-output_dir = input("Enter the path to the output directory: ")
+input_file = input("Enter the path to the source video file: ") or "/Users/oren/Downloads/drive-download-20240930T140445Z-001/set_5__original.mp4"
+output_dir = input("Enter the path to the output directory: ") or "/Users/oren/Downloads/drive-download-20240930T140445Z-001/crf/"
 if not os.path.exists(output_dir):
     os.makedirs(output_dir)
 
 min_crf = 18
-max_crf = 30
+max_crf = 38
 
 
 # Transcoding

@@ -59,12 +59,11 @@ import matplotlib.pyplot as plt
 # User input
 input_file = input("Enter the path to the source video file: ")
 output_dir = input("Enter the path to the output directory: ")
+min_crf = 18
+max_crf = 38
+
 if not os.path.exists(output_dir):
     os.makedirs(output_dir)
-
-min_crf = 18
-max_crf = 30
-
 
 # Transcoding
 def ffcommand(input_file, output_dir, crf):
@@ -76,7 +75,7 @@ def ffcommand(input_file, output_dir, crf):
     subprocess.run(command)
 
 # Calculate VMAF
-def calc_vmaf(input_file, transcoded_file):
+def calculate_vmaf(input_file, transcoded_file):
     command = [
         "ffmpeg", "-i", transcoded_file, "-i", input_file,
         "-lavfi", "libvmaf", "-f", "null", "-"
@@ -92,44 +91,47 @@ def calc_vmaf(input_file, transcoded_file):
     return None
 
 # Calculate datarate
-def calc_datarate(transcoded_file):
+def calculate_datarate(transcoded_file):
     command = [
         "ffprobe", "-v", "error", "-select_streams", "v:0", "-show_entries",
         "stream=bit_rate", "-of", "default=noprint_wrappers=1:nokey=1", transcoded_file
     ]
     result = subprocess.run(command, capture_output=True, text=True)
     
-    datarate = result.stdout.strip()
-    if datarate:
-        # print(f"Datarate for {transcoded_file}: {datarate} bps")
-        return float(datarate) / 1e6 # convert bits to Megabits
+    dataate = result.stdout.strip()
+    if dataate:
+        # print(f"Dataate for {transcoded_file}: {dataate} bps")
+        return float(dataate) / 1e6 # convert bits to Megabits
     return None
 
 # Run commands
 def batch(input_file, output_dir, min_crf = min_crf, max_crf = max_crf, step=2):
     crf_values = []
     vmaf_scores = []
-    datarates = []
+    dataates = []
     
     for crf_value in range(min_crf, max_crf + 1, step):
         # print(f"CRF value: {crf_value}")
         ffcommand(input_file, output_dir, crf_value)
-        transcoded_file = os.path.join(output_dir, f"CRF{crf_value}.mp4")
-        vmaf_score = calc_vmaf(input_file, transcoded_file)
-        datarate = calc_datarate(transcoded_file)
         
-        if vmaf_score is not None and datarate is not None:
+        transcoded_file = os.path.join(output_dir, f"CRF{crf_value}.mp4")
+        
+        vmaf_score = calculate_vmaf(input_file, transcoded_file)
+        
+        dataate = calculate_datarate(transcoded_file)
+        
+        if vmaf_score is not None and dataate is not None:
             crf_values.append(crf_value)
             vmaf_scores.append(vmaf_score)
-            datarates.append(datarate)
+            dataates.append(dataate)
     
-    return datarates, vmaf_scores
+    return dataates, vmaf_scores
 
 # Plot graph
-def plot_rd_curve(datarates, vmaf_scores, output_dir):
+def plot_rd_curve(dataates, vmaf_scores, output_dir):
     plt.figure()
-    plt.plot(datarates, vmaf_scores, marker='o')
-    plt.title("Rate-Distortion Curve (VMAF / DataRate)")
+    plt.plot(dataates, vmaf_scores, marker='o')
+    plt.title("Rate-Distortion Curve (VMAF vs dataRate)")
     plt.xlabel("Datarate (Mbps)")
     plt.ylabel("VMAF Score")
     plt.grid(True)
@@ -139,8 +141,8 @@ def plot_rd_curve(datarates, vmaf_scores, output_dir):
     plt.close()
     print(f"RD curve saved as {output_image_path}")
 
-datarates, vmaf_scores = batch(input_file, output_dir)
-plot_rd_curve(datarates, vmaf_scores, output_dir)                               
+dataates, vmaf_scores = batch(input_file, output_dir)
+plot_rd_curve(dataates, vmaf_scores, output_dir)                  
               </code>
             </pre>
           </div>
