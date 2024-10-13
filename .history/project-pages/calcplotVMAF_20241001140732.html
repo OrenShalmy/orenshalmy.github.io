@@ -1,0 +1,179 @@
+<!DOCTYPE html>
+<html lang="en">
+	<head>
+    <!-- Google tag (gtag.js) -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-DLM9SL7HFB"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'G-DLM9SL7HFB');
+</script>
+		<meta charset="utf-8">
+     <link rel="icon" href="../assets/media/SMPTE-s.png" />
+     <title>Oren Shalmy</title>
+    <meta name="description" content="A collection of useful FFmpeg code">
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <link rel="stylesheet" href="../css/layout.css">
+    <link rel="stylesheet" href="../css/typography.css">
+    <link rel="stylesheet" href="../css/utilities.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/default.min.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/highlightjs-line-numbers.js/dist/highlightjs-line-numbers.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/bash.min.js"></script>
+    <script defer src="../js/script.js"></script>
+    <script>hljs.highlightAll(); hljs.initLineNumbersOnLoad({singleLine: true, startFrom: 1,});</script>
+	</head>
+
+    <body>
+    <!-- NAVBAR -->
+    <div class="navbar">
+      <a class="nav-title-link" href="../index.html">
+        <span class="nav-title">Home</span>
+        <a class="button" href="mailto:orenshalmy@gmail.com">
+          <span class="button-text">Contact Me</span>
+        </a>
+      </a>
+    </div>
+
+    <!-- MAIN PAGE CONTENT -->
+    <div id="main-content">
+
+      <!-- PROJECT HEADER -->
+      <div id="project-header">
+        <div class="main-title">Calculate and plot VMAF vs DataRate</div>
+        <div class="body-text">Transcode a file with different CRF values and polt VMAF / Datarate RD Curve<a href="https://www.gariany.com/2020/08/ffmpeg-step-by-step-retro-video-filter/">this</a> work.</div>
+            <img src="../assets/media/rd_curve.png" class="project-image">
+      </div>
+      <div id="project-details">
+        <div class="subheader-text">Code:</div>
+        <div class="project-details-content">
+          <div class="body-text">
+            <pre>
+                <code class="language-python">import os
+import subprocess
+import matplotlib.pyplot as plt
+
+# User input
+input_file = input("Enter the path to the source video file: ")
+output_dir = input("Enter the path to the output directory: ")
+if not os.path.exists(output_dir):
+    os.makedirs(output_dir)
+
+min_crf = 18
+max_crf = 30
+
+
+# Transcoding
+def ffcommand(input_file, output_dir, crf):
+    output_file = os.path.join(output_dir, f"CRF{crf}.mp4")
+    command = [
+        "ffmpeg", "-hide_banner", "-i", input_file, "-c:v", "libx264", "-crf", str(crf),
+        "-pix_fmt", "yuv420p", "-an", "-y", output_file
+    ]
+    subprocess.run(command)
+
+# Calculate VMAF
+def calc_vmaf(input_file, transcoded_file):
+    command = [
+        "ffmpeg", "-i", transcoded_file, "-i", input_file,
+        "-lavfi", "libvmaf", "-f", "null", "-"
+    ]
+    
+    result = subprocess.run(command, capture_output=True, text=True)
+    
+    for line in result.stderr.splitlines():
+        if "VMAF score:" in line:
+            vmaf_score = line.split("VMAF score:")[1].strip()
+            # print(f"VMAF Score for {transcoded_file}: {vmaf_score}")
+            return float(vmaf_score)
+    return None
+
+# Calculate datarate
+def calc_datarate(transcoded_file):
+    command = [
+        "ffprobe", "-v", "error", "-select_streams", "v:0", "-show_entries",
+        "stream=bit_rate", "-of", "default=noprint_wrappers=1:nokey=1", transcoded_file
+    ]
+    result = subprocess.run(command, capture_output=True, text=True)
+    
+    datarate = result.stdout.strip()
+    if datarate:
+        # print(f"Datarate for {transcoded_file}: {datarate} bps")
+        return float(datarate) / 1e6 # convert bits to Megabits
+    return None
+
+# Run commands
+def batch(input_file, output_dir, min_crf = min_crf, max_crf = max_crf, step=2):
+    crf_values = []
+    vmaf_scores = []
+    datarates = []
+    
+    for crf_value in range(min_crf, max_crf + 1, step):
+        # print(f"CRF value: {crf_value}")
+        ffcommand(input_file, output_dir, crf_value)
+        transcoded_file = os.path.join(output_dir, f"CRF{crf_value}.mp4")
+        vmaf_score = calc_vmaf(input_file, transcoded_file)
+        datarate = calc_datarate(transcoded_file)
+        
+        if vmaf_score is not None and datarate is not None:
+            crf_values.append(crf_value)
+            vmaf_scores.append(vmaf_score)
+            datarates.append(datarate)
+    
+    return datarates, vmaf_scores
+
+# Plot graph
+def plot_rd_curve(datarates, vmaf_scores, output_dir):
+    plt.figure()
+    plt.plot(datarates, vmaf_scores, marker='o')
+    plt.title("Rate-Distortion Curve (VMAF / DataRate)")
+    plt.xlabel("Datarate (Mbps)")
+    plt.ylabel("VMAF Score")
+    plt.grid(True)
+    
+    output_image_path = os.path.join(output_dir, "rd_curve.png")
+    plt.savefig(output_image_path)
+    plt.close()
+    print(f"RD curve saved as {output_image_path}")
+
+datarates, vmaf_scores = batch(input_file, output_dir)
+plot_rd_curve(datarates, vmaf_scores, output_dir)                               
+              </code>
+            </pre>
+          </div>
+        </div>
+      </div>
+
+      <!-- FREE TEXT -->
+        <div id="about-section">
+            <span class="subheader-text">Get your console ready...</span>
+            <div class="about-section-content">
+                <div class="body-text">
+                <div class="on-line-text">On lines 1-3:</div> Import libraries.<p>
+                <div class="on-line-text">On lines 6-7:</div> Ask user for source file and work directory.<p>
+                  <div class="on-line-text">On lines 11-12:</div> Select CRF values to test.<p>
+                    <div class="on-line-text">On lines 72:</div> The base ffmpeg command to run with the variable CRF values.<p></p>
+              
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- FOOTER -->
+    <div id="footer">
+      <a class="icon-link" target="_blank" href="https://www.linkedin.com/in/orenshalmy/">
+        <image src="../assets/icons/LinkedIn.svg" class="footer-icon"/>
+      </a>
+      <a class="icon-link" target="_blank" href="https://twitter.com/orenshalmy">
+        <image src="../assets/icons/twitter.svg" class="footer-icon"/>
+      </a>
+      <a class="icon-link" href="mailto:orenshalmy@gmail.com@gmail.com">
+        <image src="../assets/icons/mail.svg" class="footer-icon"/>
+      </a>
+    </div>
+
+	</body>
+</html>
