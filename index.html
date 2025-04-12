@@ -19,6 +19,7 @@
     <link rel="stylesheet" href="./css/layout.css" />
     <link rel="stylesheet" href="./css/typography.css" />
     <link rel="stylesheet" href="./css/utilities.css" />
+    <link id="dark-mode-stylesheet" rel="stylesheet" href="" />
 
     <script defer src="./js/script.js"></script>
   </head>
@@ -31,6 +32,7 @@
           <span class="button-text">Contact Me</span>
         </a>
       </a>
+      <button id="dark-mode-toggle" class="button">Toggle Dark Mode</button>
     </div>
 
     <!-- MAIN PAGE CONTENT -->
@@ -256,7 +258,7 @@
             <img src="assets/media/rd_curve.png" />
             <div class="project-card-text-container">
               <div class="subheader-text project-title">
-                <a href="project-pages/calcplotVMAF.html">Plot CRF/DataRa§te</a>
+                <a href="project-pages/calcplotVMAF.html">Plot CRF/DataRate</a>
               </div>
               <div class="body-text project-card-text">Plot curve for CRF/DataRate</div>
             </div>
@@ -292,5 +294,27 @@
         <image src="../assets/icons/mail.svg" class="footer-icon" />
       </a>
     </div>
+
+    <script>
+      const toggleButton = document.getElementById('dark-mode-toggle');
+      const darkModeStylesheet = document.getElementById('dark-mode-stylesheet');
+
+      // Check for saved user preference
+      const userPrefersDark = localStorage.getItem('dark-mode') === 'enabled';
+
+      if (userPrefersDark) {
+        darkModeStylesheet.setAttribute('href', './css/dark-mode.css');
+      }
+
+      toggleButton.addEventListener('click', () => {
+        if (darkModeStylesheet.getAttribute('href')) {
+          darkModeStylesheet.removeAttribute('href');
+          localStorage.setItem('dark-mode', 'disabled');
+        } else {
+          darkModeStylesheet.setAttribute('href', './css/dark-mode.css');
+          localStorage.setItem('dark-mode', 'enabled');
+        }
+      });
+    </script>
   </body>
 </html>

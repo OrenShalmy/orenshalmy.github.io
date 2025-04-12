@@ -1,0 +1,17 @@
+body {
+  background-color: #121212;
+  color: #ffffff;
+}
+
+.navbar, #footer {
+  background-color: #1e1e1e;
+}
+
+a {
+  color: #bb86fc;
+}
+
+.project-card {
+  background-color: #1e1e1e;
+  border: 1px solid #333333;
+}
