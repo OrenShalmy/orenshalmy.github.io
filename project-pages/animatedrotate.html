@@ -62,7 +62,8 @@ duration=2 # final output video duration
 rotation=($angles_to_rotate/$duration) # calculate how much to rotate per frame
 
 ffmpeg \
--t $duration -i $input \
+-t $duration \ # optionally trim the clip to the same duration
+-i $input \
 -vf "rotate='($start_angle*PI/180)+$rotation*(min(t, $duration))*PI/180'" \
 -y $output
 

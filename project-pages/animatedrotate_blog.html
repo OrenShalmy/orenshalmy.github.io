@@ -1,0 +1,259 @@
+<!DOCTYPE html>
+<html lang="en">
+	<head>
+    <!-- Google tag (gtag.js) -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-DLM9SL7HFB"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'G-DLM9SL7HFB');
+</script>
+		<meta charset="utf-8">
+     <link rel="icon" href="../assets/media/SMPTE-s.png" />
+     <title>Creating Smooth Animated Rotations with FFmpeg | Oren Shalmy</title>
+    <meta name="description" content="Learn how to create smooth animated video rotations using FFmpeg with this comprehensive tutorial">
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <link rel="stylesheet" href="../css/layout.css">
+    <link rel="stylesheet" href="../css/typography.css">
+    <link rel="stylesheet" href="../css/utilities.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/default.min.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/highlightjs-line-numbers.js/dist/highlightjs-line-numbers.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/bash.min.js"></script>
+    <script defer src="../js/script.js"></script>
+    <script>hljs.highlightAll(); hljs.initLineNumbersOnLoad({singleLine: true, startFrom: 1,});</script>
+	</head>
+
+    <body>
+    <!-- NAVBAR -->
+    <div class="navbar">
+      <a class="nav-title-link" href="../index.html">
+        <span class="nav-title">Home</span>
+        <a class="button" href="mailto:orenshalmy@gmail.com">
+          <span class="button-text">Contact Me</span>
+        </a>
+      </a>
+    </div>
+
+    <!-- MAIN PAGE CONTENT -->
+    <div id="main-content">
+
+      <!-- PROJECT HEADER -->
+      <div id="project-header">
+        <div class="main-title">Creating Smooth Animated Rotations with FFmpeg</div>
+        <div class="body-text">A comprehensive guide to rotating videos dynamically over time</div>
+      </div>
+
+      <!-- INTRODUCTION -->
+      <div id="about-section">
+        <span class="subheader-text">Introduction</span>
+        <div class="about-section-content">
+          <div class="body-text">
+            
+            <p>In this tutorial, we'll explore how to use FFmpeg to create smooth, time-based rotation animations. Unlike static rotation that applies a fixed angle to every frame, animated rotation allows you to specify start and end angles and have FFmpeg smoothly interpolate between them over a defined duration.</p>
+            
+            <p>This technique is particularly useful for:</p>
+            <ul>
+              <li>Creating dynamic title sequences and motion graphics</li>
+              <li>Adding visual interest to presentations and tutorials</li>
+              <li>Simulating camera movement in post-production</li>
+              <li>Correcting horizon tilt with a gradual adjustment</li>
+            </ul>
+            
+            <p>The best part? It can all be accomplished with a single FFmpeg command.</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- THE MATHEMATICS BEHIND IT -->
+      <div id="about-section">
+        <span class="subheader-text">Understanding the Math</span>
+        <div class="about-section-content">
+          <div class="body-text">
+            <p>Before diving into the code, let's understand the mathematical approach. The key to smooth rotation animation is calculating how much to rotate on each frame.</p>
+            
+            <p>The formula is straightforward:</p>
+            <ul>
+              <li><strong>Rotation per second</strong> = Total angles to rotate ÷ Duration in seconds</li>
+              <li><strong>Current angle</strong> = Start angle + (Rotation per second × Current time)</li>
+            </ul>
+            
+            <p>FFmpeg's <code>rotate</code> filter accepts angles in radians, so we convert degrees to radians by multiplying by $\frac{\pi}{180}$. The <code>min(t, duration)</code> function ensures the rotation stops at our target duration rather than continuing indefinitely.</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- CODE SECTION -->
+      <div id="project-details">
+        <div class="subheader-text">The Complete Script</div>
+        <div class="project-details-content">
+          <div class="body-text">
+            <p>Here's the complete FFmpeg command to create an animated rotation. This example rotates a video from 0° to 70° over 2 seconds:</p>
+            <pre>
+                <code class="language-bash">input=/path/to/input.mp4
+output=/path/to/output.mp4
+
+start_angle=0 # angle to start rotating from
+angles_to_rotate=70 # how many degrees to rotate, starting from start_angle
+duration=2 # final output video duration in seconds
+rotation=($angles_to_rotate/$duration) # calculate degrees to rotate per second
+
+ffmpeg \
+-t $duration \ # optionally trim the clip to the animation's duration
+-i $input \
+-vf "rotate='($start_angle*PI/180)+$rotation*(min(t, $duration))*PI/180'" \
+-y $output
+
+
+# Bonus: Use this filter to prevent edges by cropping to the largest 
+# inscribed rectangle that fits within the rotated frame.
+# -vf "rotate='($start_angle*PI/180)+$rotation*(min(t, $duration))*PI/180':ow='min(iw,ih)/sqrt(2)':oh=ow:c=none"
+
+# Bonus2: Add some motion blur to the rotation for a smoother effect
+# -vf "rotate='($start_angle*PI/180)+$rotation*(min(t, $duration))*PI/180':ow='min(iw,ih)/sqrt(2)':oh=ow:c=none,tmix=frames=3:weights='1'"
+              </code>
+            </pre>
+          </div>
+        </div>
+      </div>
+
+      <!-- CODE EXPLANATION -->
+      <div id="about-section">
+        <span class="subheader-text">Breaking Down the Code</span>
+        <div class="about-section-content">
+          <div class="body-text">
+            <p>Let's examine each component of this command:</p>
+            
+            <p><strong>Lines 1-2: File Paths</strong><br>
+            Define the input video path and the destination for the output file.</p>
+            
+            <p><strong>Line 4: Start Angle</strong><br>
+            Sets the initial rotation angle in degrees. Use 0 for no initial rotation, or any value to start from a pre-rotated position.</p>
+            
+            <p><strong>Line 5: Rotation Amount</strong><br>
+            Specifies the total degrees to rotate from the start angle. Positive values rotate clockwise, negative values rotate counter-clockwise.</p>
+            
+            <p><strong>Line 6: Duration</strong><br>
+            The length of the output video in seconds. This determines how long the rotation animation will take.</p>
+            
+            <p><strong>Line 7: Rotation Calculation</strong><br>
+            Divides the total rotation by duration to get degrees per second. This creates a linear rotation speed.</p>
+            
+            <p><strong>Line 9-13: FFmpeg Command</strong><br>
+            The main command that performs the rotation:
+            <ul>
+              <li><code>-t $duration</code>: Limits the output to the specified duration</li>
+              <li><code>-i $input</code>: Specifies the input file</li>
+              <li><code>-vf "rotate=..."</code>: Applies the rotation video filter</li>
+              <li><code>-y</code>: Overwrites the output file if it exists</li>
+            </ul>
+            </p>
+            
+            <p><strong>The Rotation Filter Expression</strong><br>
+            The filter <code>'($start_angle*PI/180)+$rotation*(min(t, $duration))*PI/180'</code> works as follows:
+            <ul>
+              <li><code>($start_angle*PI/180)</code>: Converts the starting angle from degrees to radians</li>
+              <li><code>$rotation*(min(t, $duration))</code>: Multiplies rotation-per-second by elapsed time (capped at duration)</li>
+              <li><code>*PI/180</code>: Converts the calculated degrees to radians</li>
+            </ul>
+            </p>
+            
+            <p><strong>Alternative Filter (Commented)</strong><br>
+            The alternative filter adds parameters to prevent black edges:
+            <ul>
+              <li><code>ow='min(iw,ih)/sqrt(2)'</code>: Sets output width to the largest square that fits when rotated</li>
+              <li><code>oh=ow</code>: Makes output height equal to width (square output)</li>
+              <li><code>c=none</code>: Prevents filling with a background color</li>
+            </ul>
+            This crops the video to ensure no black borders appear during rotation, though it does reduce the visible area.
+            </p>
+          </div>
+        </div>
+      </div>
+
+      <!-- SAMPLE OUTPUT -->
+      <div id="about-section">
+        <span class="subheader-text">Sample Output</span>
+        <div class="about-section-content">
+          <div class="body-text">
+            <p>Here's an example of the animated rotation effect in action. Notice how the video smoothly rotates from the starting angle to the final angle over the specified duration:</p>
+            <video width="auto" height="auto" controls autoplay loop>
+              <source src="../assets/media/rotation_blur.mp4" type="video/mp4" class="project-image">
+            </video>
+          </div>
+        </div>
+      </div>
+
+      <!-- PRACTICAL TIPS -->
+      <div id="about-section">
+        <span class="subheader-text">Practical Tips and Variations</span>
+        <div class="about-section-content">
+          <div class="body-text">
+            <p><strong>1. Avoiding Black Edges</strong><br>
+            When rotating rectangular video, black triangles appear at the corners. You have three options:
+            <ul>
+              <li>Accept the black edges (fastest processing)</li>
+              <li>Use the alternative filter with cropping parameters (shown in comments)</li>
+              <li>Apply a background blur using <code>boxblur</code> filter before rotation</li>
+            </ul>
+            </p>
+            
+            <p><strong>2. Combining with Other Effects</strong><br>
+            Rotation can be combined with other filters using commas. For example, to rotate and scale simultaneously:
+            <pre><code class="language-bash">-vf "rotate='...',scale=1920:1080"</code></pre>
+            </p>
+            
+            <p><strong>3. Multiple Rotations</strong><br>
+            To create a video that rotates multiple times, simply multiply <code>angles_to_rotate</code> by 360. For example, <code>angles_to_rotate=720</code> will create two complete rotations.</p>
+            
+            <p><strong>4. Reverse Rotation</strong><br>
+            To rotate counter-clockwise, simply use a negative value for <code>angles_to_rotate</code>. For example, <code>angles_to_rotate=-70</code> will rotate 70 degrees counter-clockwise.</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- CLOSING -->
+      <div id="about-section">
+        <span class="subheader-text">Conclusion</span>
+        <div class="about-section-content">
+          <div class="body-text">
+            <p>Animated rotation is one of the many powerful video effects you can achieve with FFmpeg's flexible filtering system. By understanding the mathematical principles behind the effect and mastering the syntax, you can create professional-looking motion graphics without expensive video editing software.</p>
+            
+            <p>The technique demonstrated here provides a foundation for more complex animations. You can extend this approach by:
+            <ul>
+              <li>Adding easing functions for non-linear rotation speeds</li>
+              <li>Combining rotation with translation for orbital camera movements</li>
+              <li>Applying different rotation speeds to different parts of your video</li>
+              <li>Creating looping rotation animations for backgrounds</li>
+            </ul>
+            </p>
+            
+            <p>FFmpeg's expression evaluation system opens up endless possibilities for creative video manipulation. The same principles used here for rotation can be applied to scaling, positioning, color grading, and countless other effects.</p>
+            
+            <p>I encourage you to experiment with different values and combinations. Try modifying the rotation speed, changing the start and end angles, or combining this effect with other filters. The best way to learn FFmpeg is through hands-on experimentation.</p>
+            
+            <p>If you found this tutorial helpful or have created something interesting using these techniques, I'd love to hear about it. Feel free to reach out through the contact link below!</p>
+          </div>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- FOOTER -->
+    <div id="footer">
+      <a class="icon-link" target="_blank" href="https://www.linkedin.com/in/orenshalmy/">
+        <image src="../assets/icons/LinkedIn.svg" class="footer-icon"/>
+      </a>
+      <a class="icon-link" target="_blank" href="https://twitter.com/orenshalmy">
+        <image src="../assets/icons/twitter.svg" class="footer-icon"/>
+      </a>
+      <a class="icon-link" href="mailto:orenshalmy@gmail.com">
+        <image src="../assets/icons/mail.svg" class="footer-icon"/>
+      </a>
+    </div>
+
+	</body>
+</html>
